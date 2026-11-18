@@ -11,5 +11,8 @@ ShopSniff was built with Claude as the coding agent. Every change was verified b
 | 5–6 | **Self-test 5/5, twice in a row.** Shady store 0/100, honest store 100/100. | — | green ✅ |
 | 7 | The honest store's stock check **failed**: it read "12 in stock → 8 in stock → 30 in stock". Those are three different products, because Kane picked a different card after each reload. | The mission now stores the product name with every reading and has to find the same card each time. If the names don't match, ShopSniff calls the result inconclusive instead of a trick. | `afe7d4a` |
 | 8 | The new guard worked: Kane still read different products (Earbuds → Smartwatch → Desk Lamp), and ShopSniff reported **inconclusive** instead of a wrong verdict. | Stopped asking Kane to stick to one card. Kane reads the whole product list on every load, and ShopSniff compares each product with itself across loads. | stock list fix |
+| 9 | **Self-test 5/5.** Shady store 0/100, honest store 100/100. | — | green ✅ |
+| 10–11 | After the site and shop swapped emoji for drawn icons, the shady store's stock check came back **inconclusive** twice. Kane said it *"could not identify the visible stock messages"*. A small flame icon had been put inside the stock message. (Run 10 also had one bad reload on the timer; run 11's timer was correct.) | Drew the flame with CSS so the stock message is plain text again. | `210e869` → `b7f3a78` |
+| 12 | **Self-test 5/5.** Shady store 0/100, honest store 100/100. | — | green ✅ |
 
 What we learned: Kane is the evidence, and ShopSniff never trusts a value Kane didn't actually observe. Each Kane run also links to its TestMu Test Manager page, where you can see the full run.
