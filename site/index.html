@@ -39,6 +39,8 @@ img{display:block;max-width:100%}
 /* ---------- icons ---------- */
 .ic{width:1.25em;height:1.25em;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.25em;flex:none}
 .ic .ac{stroke:var(--org)}
+.ia{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.14em;flex:none;display:inline-block}
+.ia.sm{width:.85em;height:.85em}
 .chip .ic{width:17px;height:17px}.chip.f .ic .ac{stroke:var(--mintd)}
 .ba .c small{display:flex;align-items:center;gap:6px}.ba .c small .ic{width:16px;height:16px;color:var(--ink)}
 .ba .bal .ic .ac{stroke:var(--mintd)}
@@ -279,7 +281,7 @@ footer .end{grid-column:1/-1;border-top:1px solid #ffffff1a;padding-top:18px;fon
 @keyframes pop{from{transform:scale(.85);opacity:0}}
 .vp-count{display:flex;gap:10px}.vp-count div{flex:1;background:#fff;border:1px solid #eadfbf;border-radius:10px;padding:10px;text-align:center;font-size:11px}.vp-count b{font-size:30px;display:block;letter-spacing:-1px}
 .reload{position:absolute;inset:0;background:#fff;display:grid;place-items:center;z-index:5;opacity:0;pointer-events:none}
-.reload.go{animation:flash .9s ease}.reload:after{content:"↻ loading fresh";font:13px var(--mono);color:#888}
+.reload.go{animation:flash .9s ease}.reload:after{content:"loading fresh…";font:13px var(--mono);color:#888}
 @keyframes flash{0%,100%{opacity:0}25%,60%{opacity:1}}
 .cursor{position:absolute;z-index:6;width:22px;height:22px;pointer-events:none;transition:left .7s cubic-bezier(.4,0,.2,1),top .7s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 2px 4px #0006)}
 .cursor.click:after{content:"";position:absolute;left:-10px;top:-10px;width:40px;height:40px;border-radius:50%;border:2px solid var(--org);animation:clk .5s ease-out forwards}
@@ -394,7 +396,7 @@ footer .end{grid-column:1/-1;border-top:1px solid #ffffff1a;padding-top:18px;fon
   <section class="blk" style="padding-top:0" id="sniffbox"><div class="wrap reveal">
     <div class="sniff">
       <div><img class="dog" src="assets/mark-white.png" alt=""><h2>Sniff your shop</h2><p class="sub" style="margin:0">Paste a store link to see the five missions Kane will carry out. Then run them with one command, or in GitHub Actions.</p></div>
-      <div><div class="sin"><input id="sbUrl" placeholder="https://your-shop.example" inputmode="url" autocomplete="off" spellcheck="false" aria-label="Shop link"><button class="btn m" id="sbGo">Sniff it →</button></div><div id="sbOut"></div></div>
+      <div><div class="sin"><input id="sbUrl" placeholder="https://your-shop.example" inputmode="url" autocomplete="off" spellcheck="false" aria-label="Shop link"><button class="btn m" id="sbGo">Sniff it <svg class="ia" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13.5 6.5L19 12l-5.5 5.5"/></svg></button></div><div id="sbOut"></div></div>
     </div>
   </div></section>
 
@@ -410,7 +412,7 @@ footer .end{grid-column:1/-1;border-top:1px solid #ffffff1a;padding-top:18px;fon
     <div class="frame"><div class="fbar"><i></i><i></i><i></i><span class="u" id="vpUrl">localhost:8080</span></div><div class="vp" id="vp"></div></div>
     <div class="frame term"><div class="fbar"><span>kane-cli run --agent --headless</span><span id="clock">0.0s</span></div><div class="tlog" id="tlog"></div></div>
   </div>
-  <div class="rfoot"><button class="btn b" id="replayBtn" style="padding:10px 16px">↻ Replay</button><div class="seg" id="speedSeg"><button data-x="1" class="on">1×</button><button data-x="2">2×</button><button data-x="4">4×</button></div><span id="rlink"></span></div>
+  <div class="rfoot"><button class="btn b" id="replayBtn" style="padding:10px 16px"><svg class="ia" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.5 12a7.5 7.5 0 1 1-2.4-5.5"/><path d="M19.5 4.5v4.5H15"/></svg>Replay</button><div class="seg" id="speedSeg"><button data-x="1" class="on">1×</button><button data-x="2">2×</button><button data-x="4">4×</button></div><span id="rlink"></span></div>
 </div></div>
 
 <!-- ================= CASES ================= -->
@@ -431,14 +433,14 @@ footer .end{grid-column:1/-1;border-top:1px solid #ffffff1a;padding-top:18px;fon
   </div>
   <div class="kat">
     <div><h2>How do we know it's right?</h2><p class="sub" style="margin:0">A known-answer test runs on every push. DealDrop's shady mode has all five tricks, and <span class="mono">?fixed</span> has none. The build passes only if Kane flags 5/5 in the shady store <b>and</b> 0/5 in the honest one.</p>
-      <div class="btns"><a class="btn m" href="shop/" target="_blank" rel="noopener">Shady DealDrop ↗</a><a class="btn b" style="border-color:#fff;color:#fff" href="shop/?fixed" target="_blank" rel="noopener">Honest DealDrop ↗</a></div></div>
+      <div class="btns"><a class="btn m" href="shop/" target="_blank" rel="noopener">Shady DealDrop <svg class="ia" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9.5 7H17v7.5"/></svg></a><a class="btn b" style="border-color:#fff;color:#fff" href="shop/?fixed" target="_blank" rel="noopener">Honest DealDrop <svg class="ia" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9.5 7H17v7.5"/></svg></a></div></div>
     <div class="strow" id="howSelf"></div>
   </div>
 </div></div>
 
 <!-- ================= LOOP ================= -->
 <div class="page" id="p-loop"><div class="wrap">
-  <div class="ph"><div><div class="kicker"><i></i>Kane ↔ agent</div><h2>Kane caught our own bugs.<br>The agent fixed them.</h2><p class="sub">ShopSniff was built with Claude as the coding agent and verified by Kane in GitHub Actions on every push. Each time, the agent read Kane's NDJSON output and pushed a fix, until the self-test went green.</p></div></div>
+  <div class="ph"><div><div class="kicker"><i></i>Kane <svg class="ia" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 12h17M7.5 8l-4 4 4 4M16.5 8l4 4-4 4"/></svg> agent</div><h2>Kane caught our own bugs.<br>The agent fixed them.</h2><p class="sub">ShopSniff was built with Claude as the coding agent and verified by Kane in GitHub Actions on every push. Each time, the agent read Kane's NDJSON output and pushed a fix, until the self-test went green.</p></div></div>
   <div class="tl" id="timeline"></div>
 </div></div>
 
@@ -474,13 +476,14 @@ npm run selftest</pre>
   <div class="wrap">
     <div><div class="fb"><img src="assets/mark-white.png" alt="">shopsniff</div><p>An AI agent that checks if a shop is lying before you buy. Every check runs in a real browser with Kane CLI by TestMu AI. ShopSniff never enters payment details or places real orders. DealDrop is a fictional store built to test it.</p></div>
     <nav id="fnav"></nav>
-    <div class="end"><span>Built for the Kane CLI Online Hackathon · November 2026</span><a id="ghl" href="https://github.com/Redoxwork/shopsniff" target="_blank" rel="noopener">github.com/Redoxwork/shopsniff ↗</a></div>
+    <div class="end"><span>Built for the Kane CLI Online Hackathon · November 2026</span><a id="ghl" href="https://github.com/Redoxwork/shopsniff" target="_blank" rel="noopener">github.com/Redoxwork/shopsniff <svg class="ia" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9.5 7H17v7.5"/></svg></a></div>
   </div>
 </footer>
 
 <script>
 'use strict';
-const PAGES=[['home','Home'],['replay','Live replay'],['cases','Case files'],['how','How it works'],['loop','Kane ↔ Agent'],['install','Install']];
+const IA={ext:'<svg class="ia" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9.5 7H17v7.5"/></svg>',arr:'<svg class="ia" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13.5 6.5L19 12l-5.5 5.5"/></svg>',arrl:'<svg class="ia" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H5M10.5 6.5L5 12l5.5 5.5"/></svg>',swap:'<svg class="ia" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 12h17M7.5 8l-4 4 4 4M16.5 8l4 4-4 4"/></svg>',redo:'<svg class="ia" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.5 12a7.5 7.5 0 1 1-2.4-5.5"/><path d="M19.5 4.5v4.5H15"/></svg>',ok:'<svg class="ia" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',no:'<svg class="ia" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>'};
+const PAGES=[['home','Home'],['replay','Live replay'],['cases','Case files'],['how','How it works'],['loop','Kane '+IA.swap+' Agent'],['install','Install']];
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -508,7 +511,7 @@ function show(){
 addEventListener('hashchange',show);
 $$('[data-go]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const go=()=>document.getElementById(a.dataset.go)?.scrollIntoView({behavior:'smooth'});if(curPage!=='home'){location.hash='home';setTimeout(go,120)}else go()}));
 let io; function observe(){io?.disconnect();io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}}),{threshold:.06});$$('.page.on .reveal:not(.in)').forEach(x=>io.observe(x))}
-function wireCopy(root=document){root.querySelectorAll('.copy').forEach(b=>b.onclick=async()=>{const t=b.parentElement.innerText.replace(/^copy\s*/,'').replace(/^copied ✓\s*/,'');try{await navigator.clipboard.writeText(t);b.textContent='copied ✓'}catch{b.textContent='select + copy'}setTimeout(()=>b.textContent='copy',1600)})}
+function wireCopy(root=document){root.querySelectorAll('.copy').forEach(b=>b.onclick=async()=>{const t=b.parentElement.innerText.replace(/^copy\s*/,'').replace(/^copied\s*/,'');try{await navigator.clipboard.writeText(t);b.textContent='copied'}catch{b.textContent='select + copy'}setTimeout(()=>b.textContent='copy',1600)})}
 
 /* ---------- shared bits ---------- */
 const SVG={
@@ -540,7 +543,7 @@ function renderScene(){
     ['poster','<i></i><i class="m f"></i><i class="g f"></i><i></i><i class="r"></i><i class="f"></i><i class="g"></i><i class="m f"></i>'],
     ['badge float',`<div class="hole"></div><small>VERIFIED AGENT</small><img src="assets/mark-white.png" alt=""><b>Kane CLI</b><small>TESTMU AI${D.run?' · RUN #'+esc(D.run):''}</small><span class="ok">${D.selftest?D.selftest.passed+'/'+D.selftest.total+' SELF-TEST':'ON DUTY'}</span>`],
     ['sticker',`<div>GUILTY<small>${sh.score??'—'}/100</small></div>`],
-    ['tag float',`<small>SALE ENDS IN</small>${esc(pick(T,'timer_first')||'14:59')}<div class="re">↻ reload → ${esc(pick(T,'timer_after_reload')||'14:59')}</div>`],
+    ['tag float',`<small>SALE ENDS IN</small>${esc(pick(T,'timer_first')||'14:59')}<div class="re">${IA.redo} reload → ${esc(pick(T,'timer_after_reload')||'14:59')}</div>`],
     ['stock',`<small>ONLY</small><b>${['stock_1','stock_2','stock_3'].map(k=>num(pick(S,k))).join('→')}</b><small>LEFT! (3 LOADS)</small>`],
     ['phone',`<div><b style="font-size:9px;color:var(--ink)">DealDrop</b><div class="sc">${sh.score??'—'}</div>honesty score<div style="margin-top:12px;color:var(--orgd);font-weight:800">${sh.flags??0} tricks found</div></div>`],
     ['bcard',`<img src="assets/mark-white.png" alt=""><b>shopsniff</b>`],
@@ -554,9 +557,9 @@ let roomStore='shady', roomFilter='all';
 function tileObj(id,s,ok){
   const C=ok?'F':'T';
   switch(id){
-    case 'timer':return `<div class="ob timer"><small>SALE ENDS IN</small><b>${esc(pick(s,'timer_first'))}</b><div class="re ${C}">↻ ${esc(pick(s,'timer_after_reload'))}</div></div>`;
+    case 'timer':return `<div class="ob timer"><small>SALE ENDS IN</small><b>${esc(pick(s,'timer_first'))}</b><div class="re ${C}">${IA.redo} ${esc(pick(s,'timer_after_reload'))}</div></div>`;
     case 'stock':return `<div class="ob stock" style="background:${ok?'var(--mint)':'var(--org)'};color:${ok?'var(--ink)':'#fff'}"><small>${ok?'IN STOCK':'ONLY'}</small><b>${['stock_1','stock_2','stock_3'].map(k=>num(pick(s,k))).join('→')}</b><small>${ok?'SAME EVERY LOAD':'LEFT!'}</small></div>`;
-    case 'addon':{const it=String(pick(s,'cart_items')).split('|').map(x=>x.trim()).filter(Boolean);return `<div class="ob cart"><b style="font-size:12px">Cart</b>${it.map((x,i)=>`<div class="l ${i?'T':''}" style="${i?'font-weight:700':''}"><span>${esc(x)}</span><span>${i?'added':'×1'}</span></div>`).join('')}${it.length<2?'<div class="l F" style="font-weight:700"><span>Nothing else</span><span>✓</span></div>':''}</div>`}
+    case 'addon':{const it=String(pick(s,'cart_items')).split('|').map(x=>x.trim()).filter(Boolean);return `<div class="ob cart"><b style="font-size:12px">Cart</b>${it.map((x,i)=>`<div class="l ${i?'T':''}" style="${i?'font-weight:700':''}"><span>${esc(x)}</span><span>${i?'added':'×1'}</span></div>`).join('')}${it.length<2?'<div class="l F" style="font-weight:700"><span>Nothing else</span><span>'+IA.ok+'</span></div>':''}</div>`}
     case 'fees':{const f=pick(s,'extra_fees');return `<div class="ob fee"><b>RECEIPT</b><br>Listed ${esc(pick(s,'listed_price'))}<br>${hasFee(f)?`<span class="T" style="font-weight:700">+ ${esc(f)}</span>`:'<span class="F" style="font-weight:700">no extra fees</span>'}<br>────────<br><b>${esc(pick(s,'final_total'))}</b></div>`}
     case 'cancel':{const sh=(s.cancel_clicks||[]).find(x=>/hate|no thanks|don.?t want/i.test(x));return `<div class="ob cancel"><div class="cc"><div><small>JOIN</small><b>${(s.join_clicks||[]).length}</b></div><div><small>CANCEL</small><b class="${C}">${(s.cancel_clicks||[]).length}</b></div></div>${sh?`<div class="q">“${esc(sh.replace(/^.*?click(ing)?\s*/i,'').replace(/\s+(to|in|on) (cancel|the|your) .*$/i,''))}”</div>`:`<div class="q F">${ok?'One click + confirm':''}</div>`}</div>`}
     default:return '';
@@ -565,7 +568,7 @@ function tileObj(id,s,ok){
 function renderRoom(){
   const R=D?.[roomStore]; if(!R) return;
   $('#filters').innerHTML=FILT.map(([k,l])=>`<button data-f="${k}" class="${k===roomFilter?'on':''}">${l}</button>`).join('');
-  $('#tiles').innerHTML=R.results.map((r,i)=>{const ok=r.verdict==='pass',bad=r.verdict==='fail';return `<div class="tile ${roomFilter!=='all'&&roomFilter!==r.id?'hide':''}" style="animation-delay:${i*60}ms" data-id="${r.id}"><div class="stage">${tileObj(r.id,r.stored||{},!bad)}</div><div class="cap"><span class="nm">${ic(r.id)}${SHORT[r.id]||esc(r.title)}</span><span class="v ${bad?'t':ok?'f':'n'}">${bad?'TRICK':ok?'FAIR':esc(r.verdict.toUpperCase())}</span></div>${r.test_url?`<div class="watch"><a href="${esc(r.test_url)}" target="_blank" rel="noopener">Watch Kane do it ↗</a></div>`:''}</div>`}).join('');
+  $('#tiles').innerHTML=R.results.map((r,i)=>{const ok=r.verdict==='pass',bad=r.verdict==='fail';return `<div class="tile ${roomFilter!=='all'&&roomFilter!==r.id?'hide':''}" style="animation-delay:${i*60}ms" data-id="${r.id}"><div class="stage">${tileObj(r.id,r.stored||{},!bad)}</div><div class="cap"><span class="nm">${ic(r.id)}${SHORT[r.id]||esc(r.title)}</span><span class="v ${bad?'t':ok?'f':'n'}">${bad?'TRICK':ok?'FAIR':esc(r.verdict.toUpperCase())}</span></div>${r.test_url?`<div class="watch"><a href="${esc(r.test_url)}" target="_blank" rel="noopener">Watch Kane do it ${IA.ext}</a></div>`:''}</div>`}).join('');
 }
 $('#filters').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;roomFilter=b.dataset.f;renderRoom()});
 $('#roomSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;roomStore=b.dataset.s;$$('#roomSeg button').forEach(x=>x.className=x===b?'on '+(roomStore==='shady'?'o':'g'):'');renderRoom()});
@@ -580,7 +583,7 @@ function renderBA(){
     <div class="c"><small>${ic('addon')}CART (ADDED 1)</small><b>${items.length} item${items.length===1?'':'s'}</b><p>${esc(items.slice(1).join(', ')||'only what you added')}</p>${v('addon')}</div>
     <div class="c"><small>${ic('fees')}CHECKOUT</small><b>${esc(pick(F,'listed_price'))} → ${esc(pick(F,'final_total'))}</b><p>${hasFee(fee)?esc(fee)+' at the last step':'no extra fees'}</p>${v('fees')}</div>
     <div class="c wide"><small>${ic('cancel')}MEMBERSHIP</small><b>${(C.join_clicks||[]).length} to join · ${(C.cancel_clicks||[]).length} to cancel</b><p>clicks counted from Kane's own log</p>${v('cancel')}</div></div>`};
-  const ba=$('#ba'); ba.innerHTML=`${one(D.shady,0)}<div class="bal">${one(D.honest,1)}</div><span class="lbl l">← SHADY</span><span class="lbl r">HONEST →</span><div class="hand"></div>`;
+  const ba=$('#ba'); ba.innerHTML=`${one(D.shady,0)}<div class="bal">${one(D.honest,1)}</div><span class="lbl l">${IA.arrl} SHADY</span><span class="lbl r">HONEST ${IA.arr}</span><div class="hand"></div>`;
   let drag=false; const setX=cx=>{const r=ba.getBoundingClientRect();ba.style.setProperty('--x',Math.min(97,Math.max(3,(cx-r.left)/r.width*100))+'%')};
   ba.onpointerdown=e=>{drag=true;setX(e.clientX);try{ba.setPointerCapture(e.pointerId)}catch{}};
   ba.onpointermove=e=>{if(drag)setX(e.clientX)}; ba.onpointerup=ba.onpointercancel=()=>{drag=false};
@@ -596,7 +599,7 @@ function sniffBox(){
   if(!ok){$('#sbOut').innerHTML='<p class="hint">That doesn\'t look like a shop link. Try something like https://shop.example</p>';return}
   $('#sbOut').innerHTML=`<div class="miss">${MISSIONS.map(([i,t],n)=>`<div class="mi" style="animation-delay:${n*110}ms"><span class="mic">${ic(i)}</span><div>${t}<code>kane-cli run "Go to ${esc(u)} …" --agent --headless</code></div></div>`).join('')}</div>
   <pre class="code"><button class="copy">copy</button>node shopsniff.mjs "${esc(u)}"</pre>
-  <div class="btns" style="margin-top:14px"><a class="btn m" href="${esc(D?.repo||'https://github.com/Redoxwork/shopsniff')}/actions/workflows/shopsniff.yml" target="_blank" rel="noopener">Run in GitHub Actions ↗</a><a class="btn b" style="border-color:#fff;color:#fff" href="#install">Setup steps</a></div>
+  <div class="btns" style="margin-top:14px"><a class="btn m" href="${esc(D?.repo||'https://github.com/Redoxwork/shopsniff')}/actions/workflows/shopsniff.yml" target="_blank" rel="noopener">Run in GitHub Actions ${IA.ext}</a><a class="btn b" style="border-color:#fff;color:#fff" href="#install">Setup steps</a></div>
   <p class="hint">In Actions, tap "Run workflow" and paste the link into the URL box. Kane sniffs it, and the report appears under Case files. ShopSniff never pays or places orders.</p>`;
   wireCopy($('#sbOut'));
 }
@@ -608,7 +611,7 @@ const LOOP=[
  {run:'Kane run 2',commit:'301e10f',c:'var(--org)',h:'5/5 tricks caught, but 2 honest checks came back empty',kane:'<q>browser page was closed while the system was trying to take a screenshot</q>, and an empty <code>final_state</code>.',agent:'Retry a Kane run that ends without evidence, and call it inconclusive instead of "not present".'},
  {run:'Kane run 3',commit:'4f0774d',c:'var(--org)',h:'The cancel check failed on both stores',kane:'<q>the test could not read its recorded click history</q>. Kane can\'t report its own clicks.',agent:'Stopped asking Kane to count. ShopSniff now counts Kane\'s own <code>click:</code> / <code>type:</code> actions from the NDJSON stream.'},
  {run:'Kane run 4',commit:'ad4d28e',c:'#e0a100',h:'The shady stock check passed. That was a false negative.',kane:'The step log showed Kane read the page once and stored the same value three times. It never reloaded.',agent:'Missions now require fresh page loads, and ShopSniff counts <code>navigate</code> steps in Kane\'s log. No reload means no verdict.'},
- {run:'Kane runs 5 + 6',commit:'green ✓',c:'var(--mintd)',h:'Self-test 5/5, twice in a row. Shady 0/100, honest 100/100.',kane:'All 10 missions completed with evidence, each linked to its TestMu Test Manager run.',agent:'Shipped, and left Kane running on every push.'},
+ {run:'Kane runs 5 + 6',commit:'green',c:'var(--mintd)',h:'Self-test 5/5, twice in a row. Shady 0/100, honest 100/100.',kane:'All 10 missions completed with evidence, each linked to its TestMu Test Manager run.',agent:'Shipped, and left Kane running on every push.'},
  {run:'Kane run 7',commit:'e22354f',c:'var(--org)',h:'A false alarm on the honest store',kane:'The honest stock read <q>12 in stock → 8 in stock → 30 in stock</q>. Those are three different products: after each reload Kane picked a different card.',agent:'The mission now stores the product name with every reading and must find the same card each time. If the names don\'t match, ShopSniff calls it inconclusive instead of a trick.'},
  {run:'Kane run 8',commit:'afe7d4a',c:'#e0a100',h:'The new guard worked, but Kane still wandered',kane:'It read <q>Earbuds → Smartwatch → Desk Lamp</q> across the three loads. ShopSniff said inconclusive instead of giving a wrong verdict.',agent:'Stopped asking Kane to stick to one card. Kane now reads the whole product list on every load, and ShopSniff compares each product with itself.'},
 ];
@@ -619,10 +622,10 @@ function render(){
   $('#meta').innerHTML=`<div><b class="mo">${sh?.score??'—'}/100</b>Shady store</div><div><b class="mg">${ho?.score??'—'}/100</b>Honest store</div><div><b>${D.kaneRuns??0}</b>Kane missions</div>`;
   renderScene(); renderRoom(); renderBA();
   $('#stats').innerHTML=[[D.kaneRuns??0,'Kane missions run in real Chrome'],[S?S.passed+'/'+S.total:'—','self-test checks correct'],[(sh?.results||[]).reduce((n,r)=>n+(r.steps||[]).filter(x=>x.s==='done').length,0),'browser steps in the latest shady run'],['0','human clicks needed']].map(([b,s])=>`<div><b>${b}</b><span>${s}</span></div>`).join('');
-  const rows=(sh?.results||[]).map(r=>{const h=res(ho,r.id);const ok=r.verdict==='fail'&&h?.verdict==='pass';return `<div><span>${ICON[r.id]||''} ${esc(r.title)}</span><em style="color:${r.verdict==='fail'?'var(--orgd)':'var(--mut)'}">${r.verdict==='fail'?'flagged':esc(r.verdict)}</em><em style="color:${h?.verdict==='pass'?'var(--mintd)':'var(--mut)'}">${h?.verdict==='pass'?'fair':esc(h?.verdict||'—')} ${ok?'✓':'✗'}</em></div>`}).join('');
+  const rows=(sh?.results||[]).map(r=>{const h=res(ho,r.id);const ok=r.verdict==='fail'&&h?.verdict==='pass';return `<div><span>${ICON[r.id]||''} ${esc(r.title)}</span><em style="color:${r.verdict==='fail'?'var(--orgd)':'var(--mut)'}">${r.verdict==='fail'?'flagged':esc(r.verdict)}</em><em style="color:${h?.verdict==='pass'?'var(--mintd)':'var(--mut)'}">${h?.verdict==='pass'?'fair':esc(h?.verdict||'—')} ${ok?IA.ok:IA.no}</em></div>`}).join('');
   $('#selftest').innerHTML=`${ring(S?Math.round(100*S.passed/S.total):null)}<div><h3 style="margin:0 0 4px;font-size:24px;letter-spacing:-.8px">Self-test: ${S?S.passed+'/'+S.total:'—'} checks correct</h3><p class="sub" style="margin:0 0 14px">Shady store must be flagged, honest store must pass. Ran ${ago(S?.when)}.</p><div class="strow">${rows}</div></div>`;
   $('#howSelf').innerHTML=rows.replace(/var\(--mut\)/g,'#b6bbd0');
-  $('#caseList').innerHTML=(D.reports||[]).map(r=>`<a class="row" href="reports/${encodeURIComponent(r.id)}/index.html">${ring(r.score,1)}<div class="t"><b>${esc(/shady/.test(r.name)?'Shady DealDrop':/honest/.test(r.name)?'Honest DealDrop':r.name)}</b><span>${esc(r.verdict)} · ${r.flags} trick${r.flags===1?'':'s'} · ${ago(r.created)} · ${esc(r.id)}</span></div><span class="go">→</span></a>`).join('');
+  $('#caseList').innerHTML=(D.reports||[]).map(r=>`<a class="row" href="reports/${encodeURIComponent(r.id)}/index.html">${ring(r.score,1)}<div class="t"><b>${esc(/shady/.test(r.name)?'Shady DealDrop':/honest/.test(r.name)?'Honest DealDrop':r.name)}</b><span>${esc(r.verdict)} · ${r.flags} trick${r.flags===1?'':'s'} · ${ago(r.created)} · ${esc(r.id)}</span></div><span class="go">${IA.arr}</span></a>`).join('');
   const fin=S?{run:'Latest Kane run',commit:ago(S.when),c:S.passed===S.total?'var(--mintd)':'var(--org)',h:S.passed===S.total?`Self-test ${S.passed}/${S.total} after the fix. Shady ${sh?.score??'—'}/100, honest ${ho?.score??'—'}/100.`:`Self-test ${S.passed}/${S.total}: Kane found something new to fix.`,kane:'Every push re-runs all 10 missions in GitHub Actions. This entry updates itself from the latest run.',agent:S.passed===S.total?'Nothing to fix. The loop stays on.':'Reads the NDJSON and pushes the next fix.'}:null;
   $('#timeline').innerHTML=[...LOOP,...(fin?[fin]:[])].map(x=>`<div class="ti reveal" style="--c:${x.c}"><div class="h"><span>${x.run}</span><span>${x.commit}</span></div><h4>${x.h}</h4><div class="kv"><span class="k">KANE</span><div>${x.kane}</div><span class="a">AGENT</span><div>${x.agent}</div></div></div>`).join('');
   fillRings(); wireCopy();
@@ -662,7 +665,7 @@ async function startReplay(){
   vp().className='vp'+(rStore==='honest'?' honest':''); vp().innerHTML=''; $('#vpUrl').textContent='localhost:8080/'+(rStore==='honest'?'?fixed':'');
   $('#chips').innerHTML=R.results.map(r=>`<span class="chip" data-c="${r.id}"><i></i>${ICON[r.id]||''} ${esc(r.title)}</span>`).join('');
   $('#tlog').innerHTML=''; const t0=performance.now(); clockT=setInterval(()=>{$('#clock').textContent=((performance.now()-t0)/1000*speed).toFixed(1)+'s'},100);
-  $('#rlink').innerHTML=`<a href="reports/${encodeURIComponent(R.id)}/index.html">Open the full case file →</a>`;
+  $('#rlink').innerHTML=`<a href="reports/${encodeURIComponent(R.id)}/index.html">Open the full case file ${IA.arr}</a>`;
   log('p',`# ShopSniff → ${esc(R.url)} · ${R.results.length} missions · replay of ${esc(new Date(R.created).toUTCString())}`);
   try{
     for(const r of R.results){
@@ -678,7 +681,7 @@ async function startReplay(){
       while(i<lines.length){const x=lines[i++];log(x.s==='end'?'end':x.s==='failed'?'no':'ok',`${x.s==='end'?'↳':x.s==='failed'?'✗':'✓'} ${esc(x.r)}`)}
       const bad=r.verdict==='fail', good=r.verdict==='pass';
       log(bad?'vt':good?'vf':'p',`${bad?'● TRICK':good?'● FAIR':'● '+esc(r.verdict.toUpperCase())} · ${esc(r.finding)}`);
-      if(r.test_url) log('p',`  ↗ TestMu run: ${esc(r.test_url.slice(0,70))}…`);
+      if(r.test_url) log('p',`  → TestMu run: ${esc(r.test_url.slice(0,70))}…`);
       if(chip) chip.className='chip '+(bad?'t':good?'f':'');
       vp().appendChild(el('div','vst '+(bad?'t':'f'),bad?'TRICK':'FAIR'));
       await wait(1300);

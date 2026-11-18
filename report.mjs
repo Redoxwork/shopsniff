@@ -67,7 +67,7 @@ export function renderReport(r) {
   }).join('');
   return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ShopSniff · ${esc(r.name)} · ${r.score ?? '—'}/100</title><link rel="icon" href="../../assets/favicon.png">${FONTS}<style>${CSS}</style></head><body><main>
-<div class="top">${logo('../../')}<a class="back" href="../../index.html#cases">← All case files</a></div>
+<div class="top">${logo('../../')}<a class="back" href="../../index.html#cases"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px" aria-hidden="true"><path d="M20 12H5M10.5 6.5L5 12l5.5 5.5"/></svg>All case files</a></div>
 <div class="hero">
   <div class="ring" style="--p:${r.score ?? 0};--c:${c}" data-testid="score"><div><b>${r.score ?? '—'}</b><span>honesty score</span></div></div>
   <div><span class="pill" style="background:${c};color:#fff" data-testid="verdict">${esc(r.verdict)} · grade ${esc(r.grade)}</span>

@@ -23,6 +23,8 @@
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px}
   .thumb{height:130px;border-radius:10px;display:grid;place-items:center;font-size:54px}
+  .thumb .art{width:84px;height:84px}
+  .pd .thumb .art{width:170px;height:170px}
   .price{font-size:22px;font-weight:800}
   .was{color:var(--mut);text-decoration:line-through;font-size:14px;margin-left:6px;font-weight:400}
   .stock{font-size:13px;font-weight:700;color:var(--red)}
@@ -67,10 +69,10 @@ const FIXED = new URLSearchParams(location.search).has('fixed');
 document.getElementById('modeTag').textContent = FIXED ? '(honest version)' : '';
 
 const PRODUCTS = [
-  {id:'buds',  name:'AirWave Pro Earbuds', price:49.00, was:129.00, emoji:'🎧', color:'#ffe1e1', stock:12},
-  {id:'watch', name:'PulseFit Smartwatch', price:79.00, was:199.00, emoji:'⌚', color:'#e1ecff', stock:8},
-  {id:'lamp',  name:'Glow Desk Lamp',      price:24.00, was:59.00,  emoji:'💡', color:'#fff1c9', stock:30},
-  {id:'pack',  name:'Trail Backpack 30L',  price:39.00, was:89.00,  emoji:'🎒', color:'#dff5e6', stock:15},
+  {id:'buds',  name:'AirWave Pro Earbuds', price:49.00, was:129.00, emoji:'<svg class="art" viewBox="0 0 64 64" fill="none" stroke="#14213d" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 38V32a20 20 0 0 1 40 0v6"/><rect x="8" y="36" width="12" height="18" rx="5" fill="#fff"/><rect x="44" y="36" width="12" height="18" rx="5" fill="#fff"/><path d="M14 42v6M50 42v6" stroke="#ff5a5f"/></svg>', color:'#ffe1e1', stock:12},
+  {id:'watch', name:'PulseFit Smartwatch', price:79.00, was:199.00, emoji:'<svg class="art" viewBox="0 0 64 64" fill="none" stroke="#14213d" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 14l2-8h12l2 8M24 50l2 8h12l2-8"/><rect x="16" y="14" width="32" height="36" rx="10" fill="#fff"/><path d="M22 33h5l3-7 4 13 3-6h5" stroke="#3a7bff"/></svg>', color:'#e1ecff', stock:8},
+  {id:'lamp',  name:'Glow Desk Lamp',      price:24.00, was:59.00,  emoji:'<svg class="art" viewBox="0 0 64 64" fill="none" stroke="#14213d" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 56h22M25 56V30l14-14"/><path d="M33 10l14 14-9 3-8-8z" fill="#fff"/><path d="M44 30l4 6M48 26l6 2M40 33l1 7" stroke="#f2a900"/></svg>', color:'#fff1c9', stock:30},
+  {id:'pack',  name:'Trail Backpack 30L',  price:39.00, was:89.00,  emoji:'<svg class="art" viewBox="0 0 64 64" fill="none" stroke="#14213d" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 14v-3a8 8 0 0 1 16 0v3"/><rect x="14" y="14" width="36" height="44" rx="12" fill="#fff"/><rect x="21" y="36" width="22" height="14" rx="4"/><path d="M14 30h36" stroke="#2fa866"/></svg>', color:'#dff5e6', stock:15},
 ];
 const ADDON = {id:'shield', name:'ShieldPlus Protection Plan', price:9.99};
 const SERVICE_FEE = 7.49;
@@ -113,7 +115,7 @@ PRODUCTS.forEach(p => {
 function stockLabel(p){
   return FIXED
     ? `<div class="stock ok" data-testid="stock">${p.stock} in stock</div>`
-    : `<div class="stock" data-testid="stock">🔥 Only ${fakeStock[p.id]} left — 23 people viewing!</div>`;
+    : `<div class="stock" data-testid="stock"><svg viewBox="0 0 24 24" width="14" height="14" fill="#e63946" style="vertical-align:-2px;margin-right:3px" aria-hidden="true"><path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-6 0 2 1 3 2 3-1-3 0-6 1-9z"/></svg>Only ${fakeStock[p.id]} left — 23 people viewing!</div>`;
 }
 
 /* ---------- 3. add to cart (sneaky add-on) ---------- */
@@ -194,7 +196,7 @@ const views = {
       <p class="muted">Demo store — no payment is taken.</p></div>`;
   },
   placed(){
-    return `<div class="panel"><h1>Order placed 🎉</h1><p>This is a demo store, so nothing was charged.</p><a class="btn" href="#/">Back to shop</a></div>`;
+    return `<div class="panel"><h1>Order placed</h1><p>This is a demo store, so nothing was charged.</p><a class="btn" href="#/">Back to shop</a></div>`;
   },
   club(){
     const m = store.get('member', false);
@@ -216,7 +218,7 @@ const views = {
     // shady: cancel is hidden as a tiny link under a big "upgrade" button
     return `<div class="panel stack"><h1>My account</h1>
       <div data-testid="member-status">Membership: DealDrop Club (active)</div>
-      <button class="btn red" onclick="alertless('Upgrade coming soon!')">Upgrade to Club Gold ✨</button>
+      <button class="btn red" onclick="alertless('Upgrade coming soon!')">Upgrade to Club Gold</button>
       <button class="btn link" id="manageLink">Membership settings</button></div>`;
   },
   // ---- shady cancel maze ----
@@ -224,7 +226,7 @@ const views = {
       <p>Billing: $12.99/month · Next charge in 6 days</p>
       <button class="btn red" onclick="location.hash='#/club'">Explore member perks</button>
       <button class="btn link" onclick="location.hash='#/cancel2'">I want to stop my membership</button></div>`; },
-  cancel2(){ return `<div class="panel stack"><h1>Wait! Are you sure? 😢</h1>
+  cancel2(){ return `<div class="panel stack"><h1>Wait! Are you sure?</h1>
       <p>Members saved an average of $214 this year. You'll lose all your perks.</p>
       <button class="btn red" onclick="location.hash='#/account'">Keep my perks</button>
       <button class="btn link" onclick="location.hash='#/cancel3'">No thanks, I hate saving money</button></div>`; },
