@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DealDrop — Black Friday Megasale</title>
+<style>
+  :root{--red:#e8202a;--ink:#16161a;--mut:#6b6b76;--bg:#fff8e6;--card:#fff;--line:#eadfbf;--ok:#11875d}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+  a{color:inherit}
+  header{background:var(--ink);color:#fff;display:flex;align-items:center;gap:16px;padding:12px 20px;position:sticky;top:0;z-index:5}
+  .logo{font-weight:900;font-size:22px;letter-spacing:-.5px;text-decoration:none}
+  .logo span{color:#ffd23f}
+  nav{margin-left:auto;display:flex;gap:16px;font-size:14px}
+  nav a{text-decoration:none;opacity:.9}
+  .cartcount{background:var(--red);border-radius:99px;padding:1px 7px;font-size:12px;margin-left:4px}
+  .bar{background:var(--red);color:#fff;text-align:center;padding:10px;font-weight:700}
+  .bar .timer{font-variant-numeric:tabular-nums;background:#0003;padding:2px 8px;border-radius:6px;margin-left:6px}
+  main{max-width:980px;margin:0 auto;padding:24px 20px 60px}
+  h1{font-size:28px;margin:0 0 4px}
+  .sub{color:var(--mut);margin:0 0 20px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px}
+  .thumb{height:130px;border-radius:10px;display:grid;place-items:center;font-size:54px}
+  .price{font-size:22px;font-weight:800}
+  .was{color:var(--mut);text-decoration:line-through;font-size:14px;margin-left:6px;font-weight:400}
+  .stock{font-size:13px;font-weight:700;color:var(--red)}
+  .stock.ok{color:var(--ok)}
+  .btn{appearance:none;border:0;background:var(--ink);color:#fff;font-weight:700;padding:11px 16px;border-radius:10px;cursor:pointer;font-size:15px;text-decoration:none;display:inline-block;text-align:center}
+  .btn.red{background:var(--red)}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  .btn.link{background:none;color:var(--mut);text-decoration:underline;font-weight:400;font-size:12px;padding:4px}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;max-width:620px}
+  .row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)}
+  .row.total{font-weight:800;font-size:19px;border-bottom:0}
+  .pd{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .pd .thumb{height:280px;font-size:110px}
+  @media(max-width:700px){.pd{grid-template-columns:1fr}}
+  label.opt{display:flex;gap:8px;align-items:flex-start;font-size:14px;padding:10px;border:1px dashed var(--line);border-radius:10px}
+  .muted{color:var(--mut);font-size:13px}
+  .stack{display:flex;flex-direction:column;gap:12px}
+  .notice{background:#e9f7ef;border:1px solid #bfe5cf;color:#0b5c3e;padding:12px;border-radius:10px}
+  footer{text-align:center;color:var(--mut);font-size:12px;padding:30px 20px}
+  textarea{width:100%;min-height:70px;border-radius:8px;border:1px solid var(--line);padding:8px;font:inherit}
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="#/">Deal<span>Drop</span></a>
+  <nav>
+    <a href="#/">Shop</a>
+    <a href="#/club">DealDrop Club</a>
+    <a href="#/account">My account</a>
+    <a href="#/cart" id="cartLink">Cart<span class="cartcount" id="cartCount">0</span></a>
+  </nav>
+</header>
+<div class="bar">BLACK FRIDAY MEGASALE — up to 70% off · Sale ends in <span class="timer" id="saleTimer">--:--</span></div>
+<main id="app"></main>
+<footer>DealDrop is a fictional demo store built for ShopSniff. Nothing here is for sale. <span id="modeTag"></span></footer>
+
+<script>
+/* ShopSniff demo store.
+   Default = "shady" mode (contains five dark patterns on purpose).
+   Add ?fixed to the URL for the honest version of the same store. */
+const FIXED = new URLSearchParams(location.search).has('fixed');
+document.getElementById('modeTag').textContent = FIXED ? '(honest version)' : '';
+
+const PRODUCTS = [
+  {id:'buds',  name:'AirWave Pro Earbuds', price:49.00, was:129.00, emoji:'🎧', color:'#ffe1e1', stock:12},
+  {id:'watch', name:'PulseFit Smartwatch', price:79.00, was:199.00, emoji:'⌚', color:'#e1ecff', stock:8},
+  {id:'lamp',  name:'Glow Desk Lamp',      price:24.00, was:59.00,  emoji:'💡', color:'#fff1c9', stock:30},
+  {id:'pack',  name:'Trail Backpack 30L',  price:39.00, was:89.00,  emoji:'🎒', color:'#dff5e6', stock:15},
+];
+const ADDON = {id:'shield', name:'ShieldPlus Protection Plan', price:9.99};
+const SERVICE_FEE = 7.49;
+const money = n => '$' + n.toFixed(2);
+const $ = s => document.querySelector(s);
+
+/* ---------- state (per browser) ---------- */
+const store = {
+  get(k, d){ try{ return JSON.parse(localStorage.getItem('dd_'+k)) ?? d }catch{ return d } },
+  set(k, v){ try{ localStorage.setItem('dd_'+k, JSON.stringify(v)) }catch{} }
+};
+const cart = () => store.get('cart', []);
+const setCart = c => { store.set('cart', c); renderCount(); };
+function renderCount(){ $('#cartCount').textContent = cart().reduce((a,l)=>a+l.qty,0); }
+
+/* ---------- 1. countdown timer ---------- */
+// shady: restarts at 14:59 on every page load (fake urgency)
+// fixed: counts down to a real, fixed end time
+const SALE_END = Date.UTC(2026, 11, 1, 23, 59, 59); // 1 Dec 2026
+const loadedAt = Date.now();
+function tick(){
+  let secs;
+  if (FIXED) secs = Math.max(0, Math.floor((SALE_END - Date.now())/1000));
+  else secs = Math.max(0, 15*60 - 1 - Math.floor((Date.now() - loadedAt)/1000));
+  const d = Math.floor(secs/86400), h = Math.floor(secs%86400/3600),
+        m = Math.floor(secs%3600/60), s = secs%60, p = n => String(n).padStart(2,'0');
+  $('#saleTimer').textContent = (d ? d+'d ' : '') + (d||h ? p(h)+':' : '') + p(m)+':'+p(s);
+}
+tick(); setInterval(tick, 1000);
+
+/* ---------- 2. stock messages ---------- */
+// shady: a random "Only N left!" on every load (fake scarcity)
+// fixed: the real stock number, same every time
+const fakeStock = {};
+PRODUCTS.forEach(p => {
+  let last; try { last = +sessionStorage.getItem('dd_fs_'+p.id) } catch {}
+  let n; do { n = 2 + Math.floor(Math.random()*4) } while (n === last); // always a "new" number
+  fakeStock[p.id] = n; try { sessionStorage.setItem('dd_fs_'+p.id, n) } catch {}
+});
+function stockLabel(p){
+  return FIXED
+    ? `<div class="stock ok" data-testid="stock">${p.stock} in stock</div>`
+    : `<div class="stock" data-testid="stock">🔥 Only ${fakeStock[p.id]} left — 23 people viewing!</div>`;
+}
+
+/* ---------- 3. add to cart (sneaky add-on) ---------- */
+function addToCart(id, withShield){
+  const c = cart();
+  const line = c.find(l => l.id === id);
+  if (line) line.qty++; else c.push({id, qty:1});
+  // shady: protection plan is slipped in without asking
+  // fixed: only added if the shopper ticks the box
+  const addShield = FIXED ? withShield : true;
+  if (addShield && !c.find(l => l.id === ADDON.id)) c.push({id:ADDON.id, qty:1});
+  setCart(c);
+  location.hash = '#/cart';
+}
+function lineInfo(l){
+  if (l.id === ADDON.id) return {name:ADDON.name, price:ADDON.price};
+  const p = PRODUCTS.find(p => p.id === l.id); return {name:p.name, price:p.price};
+}
+const subtotal = () => cart().reduce((a,l)=>a+lineInfo(l).price*l.qty, 0);
+
+/* ---------- views ---------- */
+const views = {
+  home(){
+    return `<h1>Black Friday Megasale</h1>
+      <p class="sub">Free shipping on every order. Prices include all fees.</p>
+      <div class="grid">${PRODUCTS.map(p => `
+        <div class="card" data-product="${p.id}">
+          <div class="thumb" style="background:${p.color}">${p.emoji}</div>
+          <strong>${p.name}</strong>
+          <div class="price">${money(p.price)}<span class="was">${money(p.was)}</span></div>
+          ${stockLabel(p)}
+          <a class="btn" href="#/product/${p.id}">View deal</a>
+        </div>`).join('')}</div>`;
+  },
+  product(id){
+    const p = PRODUCTS.find(p => p.id === id) || PRODUCTS[0];
+    const shieldBox = FIXED ? `
+      <label class="opt"><input type="checkbox" id="shieldBox">
+        <span>Add ${ADDON.name} for ${money(ADDON.price)} <span class="muted">(optional)</span></span></label>` : '';
+    return `<div class="pd">
+      <div class="thumb card" style="background:${p.color}">${p.emoji}</div>
+      <div class="stack">
+        <h1>${p.name}</h1>
+        <div class="price" data-testid="listed-price">${money(p.price)}<span class="was">${money(p.was)}</span></div>
+        <div class="muted">Free shipping · Price includes all fees</div>
+        ${stockLabel(p)}
+        ${shieldBox}
+        <button class="btn red" id="addBtn">Add to cart</button>
+      </div></div>`;
+  },
+  cart(){
+    const c = cart();
+    if (!c.length) return `<div class="panel"><h1>Your cart</h1><p>Your cart is empty.</p><a class="btn" href="#/">Keep shopping</a></div>`;
+    return `<div class="panel"><h1>Your cart</h1>
+      ${c.map(l => { const i = lineInfo(l); return `
+        <div class="row" data-testid="cart-line"><span>${i.name} × ${l.qty}</span>
+        <span>${money(i.price*l.qty)} <button class="btn link" data-remove="${l.id}">remove</button></span></div>`}).join('')}
+      <div class="row total"><span>Subtotal</span><span data-testid="cart-subtotal">${money(subtotal())}</span></div>
+      <a class="btn red" href="#/checkout">Checkout</a></div>`;
+  },
+  checkout(){
+    if (!cart().length) return views.cart();
+    return `<div class="panel stack"><h1>Checkout — step 1 of 2</h1>
+      <input placeholder="Full name" value="Demo Shopper" style="padding:10px;border-radius:8px;border:1px solid var(--line)">
+      <input placeholder="Email" value="demo@example.com" style="padding:10px;border-radius:8px;border:1px solid var(--line)">
+      <div class="row total"><span>Subtotal</span><span>${money(subtotal())}</span></div>
+      <a class="btn red" href="#/review">Continue to review</a></div>`;
+  },
+  review(){
+    if (!cart().length) return views.cart();
+    const fee = FIXED ? 0 : SERVICE_FEE;  // shady: fee appears only at the last step
+    return `<div class="panel"><h1>Review your order — step 2 of 2</h1>
+      ${cart().map(l => { const i = lineInfo(l); return `<div class="row"><span>${i.name} × ${l.qty}</span><span>${money(i.price*l.qty)}</span></div>`}).join('')}
+      <div class="row"><span>Shipping</span><span>FREE</span></div>
+      ${fee ? `<div class="row"><span>Service &amp; handling</span><span>${money(fee)}</span></div>` : ''}
+      <div class="row total"><span>Order total</span><span data-testid="order-total">${money(subtotal()+fee)}</span></div>
+      <button class="btn red" id="placeBtn">Place order</button>
+      <p class="muted">Demo store — no payment is taken.</p></div>`;
+  },
+  placed(){
+    return `<div class="panel"><h1>Order placed 🎉</h1><p>This is a demo store, so nothing was charged.</p><a class="btn" href="#/">Back to shop</a></div>`;
+  },
+  club(){
+    const m = store.get('member', false);
+    return `<div class="panel stack"><h1>DealDrop Club</h1>
+      <p>Extra 10% off everything, early access to drops. $12.99/month.</p>
+      ${m ? `<div class="notice" data-testid="member-status">You're a Club member.</div>
+             <a class="btn ghost" href="#/account">Manage in My account</a>`
+          : `<button class="btn red" id="joinBtn">Join Club — $12.99/mo</button>`}</div>`;
+  },
+  account(){
+    const m = store.get('member', false);
+    if (!m) return `<div class="panel stack"><h1>My account</h1>
+      <div data-testid="member-status">Membership: not a member</div>
+      <a class="btn" href="#/club">See DealDrop Club</a></div>`;
+    // fixed: one obvious cancel button
+    if (FIXED) return `<div class="panel stack"><h1>My account</h1>
+      <div data-testid="member-status">Membership: DealDrop Club (active)</div>
+      <button class="btn ghost" id="cancelBtn">Cancel membership</button></div>`;
+    // shady: cancel is hidden as a tiny link under a big "upgrade" button
+    return `<div class="panel stack"><h1>My account</h1>
+      <div data-testid="member-status">Membership: DealDrop Club (active)</div>
+      <button class="btn red" onclick="alertless('Upgrade coming soon!')">Upgrade to Club Gold ✨</button>
+      <button class="btn link" id="manageLink">Membership settings</button></div>`;
+  },
+  // ---- shady cancel maze ----
+  cancel1(){ return `<div class="panel stack"><h1>Membership settings</h1>
+      <p>Billing: $12.99/month · Next charge in 6 days</p>
+      <button class="btn red" onclick="location.hash='#/club'">Explore member perks</button>
+      <button class="btn link" onclick="location.hash='#/cancel2'">I want to stop my membership</button></div>`; },
+  cancel2(){ return `<div class="panel stack"><h1>Wait! Are you sure? 😢</h1>
+      <p>Members saved an average of $214 this year. You'll lose all your perks.</p>
+      <button class="btn red" onclick="location.hash='#/account'">Keep my perks</button>
+      <button class="btn link" onclick="location.hash='#/cancel3'">No thanks, I hate saving money</button></div>`; },
+  cancel3(){ return `<div class="panel stack"><h1>Special offer just for you</h1>
+      <p>Stay for 3 more months at 50% off!</p>
+      <button class="btn red" onclick="location.hash='#/account'">Claim 50% off</button>
+      <button class="btn link" onclick="location.hash='#/cancel4'">Decline offer and continue</button></div>`; },
+  cancel4(){ return `<div class="panel stack"><h1>Tell us why you're leaving</h1>
+      <p class="muted">Required — at least 20 characters.</p>
+      <textarea id="why" placeholder="Your reason…"></textarea>
+      <button class="btn ghost" id="whyBtn">Continue</button>
+      <div class="muted" id="whyErr"></div></div>`; },
+  cancel5(){ return `<div class="panel stack"><h1>Final step</h1>
+      <p>Type <b>CANCEL</b> below to confirm.</p>
+      <input id="typed" style="padding:10px;border-radius:8px;border:1px solid var(--line)">
+      <button class="btn ghost" id="finalCancel">Confirm cancellation</button>
+      <div class="muted" id="finalErr"></div></div>`; },
+  cancelled(){ return `<div class="panel stack"><h1>Membership cancelled</h1>
+      <div class="notice" data-testid="member-status">Your DealDrop Club membership is cancelled.</div>
+      <a class="btn" href="#/">Back to shop</a></div>`; },
+};
+function alertless(msg){ const d=document.createElement('div'); d.className='notice'; d.textContent=msg; $('#app').prepend(d); setTimeout(()=>d.remove(),2000); }
+
+/* ---------- router ---------- */
+function route(){
+  const [, name='', arg] = location.hash.split('/');
+  const view = views[name] ? name : 'home';
+  if (view === 'product') $('#app').innerHTML = views.product(arg);
+  else if (/^cancel[1-5]$/.test(view) && !store.get('member', false)) $('#app').innerHTML = views.account();
+  else $('#app').innerHTML = views[view]();
+  wire(); renderCount(); window.scrollTo(0,0);
+}
+function wire(){
+  const add = $('#addBtn');
+  if (add) add.onclick = () => addToCart(location.hash.split('/')[2] || PRODUCTS[0].id, $('#shieldBox')?.checked);
+  document.querySelectorAll('[data-remove]').forEach(b => b.onclick = () => {
+    setCart(cart().filter(l => l.id !== b.dataset.remove)); route(); });
+  const place = $('#placeBtn'); if (place) place.onclick = () => { setCart([]); location.hash = '#/placed'; };
+  const join = $('#joinBtn'); if (join) join.onclick = () => { store.set('member', true); route(); };
+  const cancel = $('#cancelBtn');
+  if (cancel) cancel.onclick = () => { if (confirmInline(cancel)) {} };
+  const manage = $('#manageLink'); if (manage) manage.onclick = () => location.hash = '#/cancel1';
+  const whyBtn = $('#whyBtn');
+  if (whyBtn) whyBtn.onclick = () => {
+    if (($('#why').value || '').trim().length < 20) $('#whyErr').textContent = 'Please write at least 20 characters.';
+    else location.hash = '#/cancel5';
+  };
+  const fin = $('#finalCancel');
+  if (fin) fin.onclick = () => {
+    if (($('#typed').value || '').trim() !== 'CANCEL') $('#finalErr').textContent = 'Please type CANCEL exactly.';
+    else { store.set('member', false); location.hash = '#/cancelled'; }
+  };
+}
+// honest version: a single in-page confirm step (no browser dialogs)
+function confirmInline(btn){
+  btn.outerHTML = `<div class="stack"><p>Cancel your $12.99/month membership?</p>
+    <button class="btn red" id="confirmCancel">Yes, cancel membership</button></div>`;
+  $('#confirmCancel').onclick = () => { store.set('member', false); location.hash = '#/cancelled'; };
+  return true;
+}
+window.addEventListener('hashchange', route);
+route();
+</script>
+</body>
+</html>

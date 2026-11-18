@@ -1,0 +1,83 @@
+name: ShopSniff (Kane CLI)
+# Runs every Kane check on the demo store, proves ShopSniff is right (selftest),
+# saves the reports into the repo and publishes the site on GitHub Pages.
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "Optional: sniff another shop URL too"
+        required: false
+  push:
+    branches: [main]
+    paths: ["demo-shop/**", "checks.mjs", "shopsniff.mjs", "report.mjs", "site/**"]
+
+permissions: { contents: write, pages: write, id-token: write }
+concurrency: { group: shopsniff, cancel-in-progress: false }
+
+jobs:
+  sniff:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    environment: { name: github-pages, url: "${{ steps.deploy.outputs.page_url }}" }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+
+      - name: Install Kane CLI
+        run: npm install -g @testmuai/kane-cli && kane-cli --version
+
+      - name: Log in to Kane
+        env:
+          KANE_USERNAME: ${{ secrets.KANE_USERNAME }}
+          KANE_ACCESS_KEY: ${{ secrets.KANE_ACCESS_KEY }}
+        run: |
+          if [ -z "$KANE_USERNAME" ] || [ -z "$KANE_ACCESS_KEY" ]; then
+            echo "::error::Add the KANE_USERNAME and KANE_ACCESS_KEY secrets (Settings > Secrets and variables > Actions)"; exit 1; fi
+          kane-cli login --username "$KANE_USERNAME" --access-key "$KANE_ACCESS_KEY"
+          kane-cli whoami || true
+
+      - name: Serve the demo store
+        run: |
+          (cd demo-shop && python3 -m http.server 8080 >/dev/null 2>&1 &)
+          sleep 2 && curl -sf http://localhost:8080/ >/dev/null && echo "store up"
+
+      - name: Self-test (shady store must fail, honest store must pass)
+        id: selftest
+        continue-on-error: true
+        env: { KANE_CLI_USER_AGENT: github-actions }
+        run: node shopsniff.mjs selftest http://localhost:8080/ --parallel 3
+
+      - name: Sniff another shop
+        if: ${{ github.event.inputs.url != '' }}
+        continue-on-error: true
+        env: { KANE_CLI_USER_AGENT: github-actions }
+        run: node shopsniff.mjs "${{ github.event.inputs.url }}" --parallel 3
+
+      - name: Summary
+        if: always()
+        run: |
+          [ -f reports/SELFTEST.md ] && cat reports/SELFTEST.md >> "$GITHUB_STEP_SUMMARY" || echo "No self-test report" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Save reports to the repo
+        if: always()
+        run: |
+          git config user.name "Redoxwork"
+          git config user.email "Redoxwork@users.noreply.github.com"
+          git add reports || true
+          git commit -m "ShopSniff reports from Kane run ${{ github.run_number }} [skip ci]" || echo "nothing to commit"
+          git pull --rebase -q && git push || true
+
+      - name: Build site
+        if: always()
+        run: node build-site.mjs
+      - uses: actions/upload-pages-artifact@v3
+        if: always()
+        with: { path: public }
+      - id: deploy
+        if: always()
+        uses: actions/deploy-pages@v4
+
+      - name: Fail if the self-test failed
+        if: steps.selftest.outcome == 'failure'
+        run: exit 1

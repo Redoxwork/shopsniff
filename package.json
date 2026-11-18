@@ -1,0 +1,16 @@
+{
+  "name": "shopsniff",
+  "version": "1.0.0",
+  "description": "An AI agent checks if a shop is lying before you buy. Every check runs in a real browser with Kane CLI.",
+  "type": "module",
+  "bin": { "shopsniff": "shopsniff.mjs" },
+  "scripts": {
+    "shop": "npx -y serve demo-shop -l 8080",
+    "sniff:shady": "node shopsniff.mjs http://localhost:8080/ --name dealdrop-shady",
+    "sniff:honest": "node shopsniff.mjs \"http://localhost:8080/?fixed\" --name dealdrop-honest",
+    "selftest": "node shopsniff.mjs selftest http://localhost:8080/",
+    "site": "node build-site.mjs"
+  },
+  "engines": { "node": ">=18" },
+  "license": "MIT"
+}

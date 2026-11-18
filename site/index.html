@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ShopSniff — does this shop play fair?</title>
+<style>
+  :root{--ink:#14141a;--mut:#6c6c78;--bg:#f6f5f1;--card:#fff;--line:#e7e4dc;--brand:#1f6f4a;--red:#e5383b}
+  *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+  main{max-width:860px;margin:0 auto;padding:40px 20px 70px}
+  .logo{font-weight:800;font-size:20px}
+  h1{font-size:clamp(32px,6vw,52px);line-height:1.05;margin:26px 0 12px;letter-spacing:-1px}
+  .lead{font-size:19px;color:var(--mut);max-width:620px}
+  .cta{display:flex;gap:10px;flex-wrap:wrap;margin:24px 0 40px}
+  .btn{background:var(--ink);color:#fff;text-decoration:none;font-weight:700;padding:12px 18px;border-radius:12px}
+  .btn.alt{background:#fff;color:var(--ink);border:1px solid var(--line)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .card b{display:block;margin-bottom:4px}.card p{margin:0;color:var(--mut);font-size:14px}
+  h2{margin:44px 0 12px;font-size:22px}
+  ol{padding-left:20px}li{margin-bottom:6px}
+  code{background:#ecebe5;padding:2px 6px;border-radius:6px;font-size:14px}
+  pre{background:var(--ink);color:#e9e9ee;padding:16px;border-radius:12px;overflow-x:auto;font-size:13px}
+  footer{margin-top:50px;color:var(--mut);font-size:13px}
+</style>
+</head>
+<body>
+<main>
+  <div class="logo">🐽 ShopSniff</div>
+  <h1>Is this shop lying to you?</h1>
+  <p class="lead">An AI agent shops like a real person in a real browser, catches the tricks, and gives the store an honesty score with evidence. Every check is run by <b>Kane CLI</b>.</p>
+  <div class="cta">
+    <a class="btn" href="reports/index.html">See the reports</a>
+    <a class="btn alt" href="shop/">Shady demo store</a>
+    <a class="btn alt" href="shop/?fixed">Honest demo store</a>
+  </div>
+
+  <h2>The five tricks it sniffs out</h2>
+  <div class="grid">
+    <div class="card"><b>⏱️ Fake countdown</b><p>Waits, reloads, and checks if “Sale ends in 14:59” starts over.</p></div>
+    <div class="card"><b>🔥 Fake scarcity</b><p>Reloads three times. If “Only 3 left” keeps changing, it’s made up.</p></div>
+    <div class="card"><b>🛒 Sneaky add-on</b><p>Adds one item and checks if anything else ended up in the cart.</p></div>
+    <div class="card"><b>💸 Hidden fees</b><p>Goes all the way to the order review and compares the total with the listed price.</p></div>
+    <div class="card"><b>🔒 Cancel maze</b><p>Joins the membership, then cancels it, counting every step and any guilt-trip buttons.</p></div>
+  </div>
+
+  <h2>How it works</h2>
+  <ol>
+    <li>ShopSniff gives Kane CLI five plain-English missions (<code>kane-cli run "…" --agent --headless</code>).</li>
+    <li>Kane does each one in a real Chrome and stores what it saw (<code>store … as …</code>).</li>
+    <li>ShopSniff judges the evidence, scores the shop, and writes a report plus <code>fixes.md</code>.</li>
+    <li>Store owner? Give <code>fixes.md</code> to your coding agent, fix the code, and sniff again until it scores 100.</li>
+  </ol>
+  <pre>npm install -g @testmuai/kane-cli && kane-cli login
+node shopsniff.mjs https://some-shop.example
+node shopsniff.mjs selftest https://&lt;this-site&gt;/shop/   # proves ShopSniff itself is right</pre>
+
+  <h2>How do we know ShopSniff is right?</h2>
+  <p>A known-answer test. DealDrop, the demo store, has every trick in its shady version and none in its honest version (<code>?fixed</code>). The self-test runs all five Kane checks on both and passes only if every trick is flagged in the shady store <i>and</i> nothing is flagged in the honest one. See <a href="reports/SELFTEST.md">SELFTEST.md</a>.</p>
+
+  <footer>Built for the Kane CLI Online Hackathon by TestMu AI. DealDrop is a fictional store; ShopSniff never pays or places real orders.</footer>
+</main>
+</body>
+</html>

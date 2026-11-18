@@ -1,0 +1,6 @@
+{
+  "name": "ShopSniff",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
+  "postCreateCommand": "bash setup.sh",
+  "forwardPorts": [8080]
+}
