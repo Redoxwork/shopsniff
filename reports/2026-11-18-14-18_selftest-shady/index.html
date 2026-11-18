@@ -1,38 +1,41 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ShopSniff · selftest-shady · 0/100</title><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet"><style>
-:root{--ink:#eef2f5;--mut:#8b96a1;--bg:#05070a;--card:#0c1014;--line:#ffffff17;--brand:#45f0a0}
-*{box-sizing:border-box}body{margin:0;font-family:'Space Grotesk',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background-image:radial-gradient(700px 400px at 90% -10%,#0f8f5a33,transparent);background:var(--bg);color:var(--ink);line-height:1.45}
-a{color:var(--brand)}main{max-width:900px;margin:0 auto;padding:28px 20px 60px}
-.top{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;margin-bottom:22px}.top small{font-weight:400;color:var(--mut);font-size:13px}
-.hero{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;display:flex;gap:24px;align-items:center;flex-wrap:wrap}
-.ring{--p:0;width:132px;height:132px;border-radius:50%;display:grid;place-items:center;flex:none;background:conic-gradient(var(--c) calc(var(--p)*1%),#ffffff14 0);box-shadow:0 0 40px -10px var(--c)}
-.ring div{width:104px;height:104px;border-radius:50%;background:var(--card);display:grid;place-items:center;text-align:center}
-.ring b{font-size:34px;display:block;line-height:1}.ring span{font-size:12px;color:var(--mut)}
-.hero h1{margin:0 0 4px;font-size:26px}.url{color:var(--mut);word-break:break-all;font-size:14px}
-.pill{display:inline-block;padding:3px 10px;border-radius:99px;color:#fff;font-size:12px;font-weight:700}
-.meta{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:13px;color:var(--mut)}
-h2{font-size:15px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin:30px 0 12px}
-.check{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:12px;border-left:5px solid var(--c)}
-.check h3{margin:0;font-size:17px;display:flex;justify-content:space-between;gap:10px;align-items:center}
-.q{color:var(--mut);font-size:14px;margin:2px 0 10px}.finding{font-size:15px;margin:0 0 10px}
-.fix{background:#45f0a00d;border:1px solid #45f0a033;border-radius:10px;padding:10px 12px;font-size:14px;margin-bottom:10px}
-details{font-size:13px;color:var(--mut)}summary{cursor:pointer}
-table{border-collapse:collapse;margin:8px 0;font-size:13px}td{border:1px solid var(--line);padding:4px 8px;vertical-align:top}
+<title>ShopSniff · selftest-shady · 0/100</title><link rel="icon" href="../../assets/favicon.png"><link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"><style>
+:root{--ink:#010e33;--ink2:#2a3256;--mut:#6b7186;--bg:#ecedea;--card:#fff;--tile:#f3f3f0;--line:#e3e4e0;--mint:#61fa9f;--mintd:#0b9a58;--org:#fb7623;--orgd:#d4500b}
+*{box-sizing:border-box}body{margin:0;font-family:'Inter Tight','Helvetica Neue',Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.45;-webkit-font-smoothing:antialiased}
+a{color:var(--ink)}main{max-width:920px;margin:0 auto;padding:22px 20px 70px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:26px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:20px;letter-spacing:-.8px;text-decoration:none}.brand img{width:38px}
+.back{font-size:13px;font-weight:700;text-decoration:none;padding:9px 14px;border-radius:99px;background:var(--ink);color:#fff}
+.hero{background:var(--card);border-radius:26px;padding:26px;display:flex;gap:26px;align-items:center;flex-wrap:wrap;box-shadow:0 30px 60px -45px #01113355}
+.ring{--p:0;width:132px;height:132px;border-radius:50%;display:grid;place-items:center;flex:none;background:conic-gradient(var(--c) calc(var(--p)*1%),#e8e9e5 0)}
+.ring div{width:108px;height:108px;border-radius:50%;background:var(--card);display:grid;place-items:center;text-align:center}
+.ring b{font-size:38px;display:block;line-height:1;font-weight:900;letter-spacing:-2px}.ring span{font-size:11px;color:var(--mut);font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.hero h1{margin:6px 0 4px;font-size:34px;letter-spacing:-1.5px;font-weight:900;line-height:1}.url{color:var(--mut);word-break:break-all;font-size:14px;font-family:'JetBrains Mono',ui-monospace,monospace}
+.pill{display:inline-block;white-space:nowrap;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.meta{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:13px;color:var(--mut)}
+h2{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink2);margin:34px 0 12px;font-weight:800}
+.check{background:var(--card);border-radius:20px;padding:20px;margin-bottom:12px;position:relative;overflow:hidden}
+.check:before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--c)}
+.check h3{margin:0;font-size:19px;letter-spacing:-.5px;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.q{color:var(--mut);font-size:14px;margin:2px 0 10px}.finding{font-size:15.5px;margin:0 0 12px}
+.fix{background:#eafff3;border:1px solid #b7f3d2;border-radius:12px;padding:11px 13px;font-size:14px;margin-bottom:10px}
+details{font-size:13px;color:var(--mut)}summary{cursor:pointer;font-weight:700;color:var(--ink2)}
+table{border-collapse:collapse;margin:8px 0;font-size:12.5px;width:100%;display:block;overflow-x:auto}td{border:1px solid var(--line);padding:5px 8px;vertical-align:top}
 .shots{display:flex;gap:8px;overflow-x:auto;margin-top:8px}.shots img{height:150px;border-radius:8px;border:1px solid var(--line)}
-code{background:#ffffff10;padding:1px 5px;border-radius:5px;font-size:12px}
-footer{margin-top:30px;color:var(--mut);font-size:12px;text-align:center}
-.list a{display:flex;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px;text-decoration:none;color:var(--ink)}
-.dot{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;flex:none}</style></head><body><main><a href="../../index.html" style="font-size:13px;color:var(--mut)">← ShopSniff home</a>
-<div class="top"><span aria-hidden="true">🐽</span> ShopSniff <small>an AI agent checks if a shop is lying before you buy</small></div>
+code{background:var(--tile);padding:1px 5px;border-radius:5px;font-size:12px;font-family:'JetBrains Mono',ui-monospace,monospace;word-break:break-word}
+footer{margin-top:34px;color:var(--mut);font-size:12.5px;text-align:center}
+.list a{display:flex;gap:14px;align-items:center;background:var(--card);border-radius:18px;padding:14px;margin-bottom:10px;text-decoration:none;color:var(--ink)}
+.dot{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:900;flex:none}</style></head><body><main>
+<div class="top"><a class="brand" href="../../index.html"><img src="../../assets/mark-navy.png" alt="" onerror="this.remove()">shopsniff</a><a class="back" href="../../index.html#cases">← All case files</a></div>
 <div class="hero">
-  <div class="ring" style="--p:0;--c:#ff3d55" data-testid="score"><div><b>0</b><span>honesty score</span></div></div>
-  <div><span class="pill" style="background:#ff3d55" data-testid="verdict">Tricks detected · grade F</span>
-    <h1>selftest-shady</h1><div class="url">http://localhost:8080/</div>
+  <div class="ring" style="--p:0;--c:#fb7623" data-testid="score"><div><b>0</b><span>honesty score</span></div></div>
+  <div><span class="pill" style="background:#fb7623;color:#fff" data-testid="verdict">Tricks detected · grade F</span>
+    <h1>Shady DealDrop</h1><div class="url">http://localhost:8080/</div>
     <div class="meta"><span>5 tricks found</span><span>5 of 5 checks conclusive</span>
     <span>Wed, 18 Nov 2026 14:25:18 GMT</span></div></div>
 </div>
-<h2>What Kane found</h2><section class="check" style="--c:#e5383b" data-testid="check-timer" data-verdict="fail">
-      <h3>Fake countdown timer <span class="pill" style="background:#e5383b">Trick found</span></h3>
+<h2>What Kane found</h2><section class="check" style="--c:#fb7623" data-testid="check-timer" data-verdict="fail">
+      <h3>Fake countdown timer <span class="pill" style="background:#fb7623;color:#fff">Trick found</span></h3>
       <p class="q">Does the &quot;sale ends in…&quot; timer restart when you reload?</p>
       <p class="finding">The timer showed 14:27, then 14:43 after waiting 10s and reloading. It restarted, so the deadline isn&#39;t real.</p>
       <div class="fix"><b>How to fix:</b> Count the countdown down to a real, fixed end date stored on the server. It must never restart on reload.</div>
@@ -46,8 +49,8 @@ No payment information was entered and no order was placed.</p>
         <p>Kane run: passed · 8 steps · 81.6s · 25.005287499999994 credits
          · <a href="https://test-manager.lambdatest.com/projects/01M7QDFJY4GFK3BVYEAWYENMTY/test-cases/01M7QGC2VRQ1GQVY7CAJQ87WSF/dashboard/share/US_9RO7Q0MJQ0HD76LW0M07R0B3IYX3Q65TELP5EBS8XM38PXTXARFUTYXCOESGL20D?type=summary&amp;agentView=true&amp;fqdn=summary-page" target="_blank">Open in TestMu Test Manager</a></p>
         <p>Objective given to Kane:<br><code>Step 1: Go to http://localhost:8080/ and store the exact time shown by the sale countdown timer (for example &quot;Sale ends in 14:59&quot;) as timer_first. Step 2: Wait 10 seconds. Step 3: Navigate to http://localhost:8080/ again so the page fully loads fresh, and immediately store the time the countdown now shows as timer_after_reload. Read the second value from the freshly loaded page; do not copy the first value. If the page has no countdown timer, store &quot;none&quot; as timer_first and &quot;none&quot; as timer_after_reload. Never enter payment details and never place a real order.</code></p>
-      </details></section><section class="check" style="--c:#e5383b" data-testid="check-stock" data-verdict="fail">
-      <h3>Fake &quot;only N left&quot; stock <span class="pill" style="background:#e5383b">Trick found</span></h3>
+      </details></section><section class="check" style="--c:#fb7623" data-testid="check-stock" data-verdict="fail">
+      <h3>Fake &quot;only N left&quot; stock <span class="pill" style="background:#fb7623;color:#fff">Trick found</span></h3>
       <p class="q">Does the scarcity message change on every reload?</p>
       <p class="finding">Nobody bought anything, but the stock count changed between reloads: 5 → 2 → 5. The scarcity is made up.</p>
       <div class="fix"><b>How to fix:</b> Show the real inventory number from your database, or drop the scarcity message.</div>
@@ -60,8 +63,8 @@ No items were added to the cart, and no payment or order actions were taken.</p>
         <p>Kane run: passed · 11 steps · 144.1s · 45.011115000000004 credits
          · <a href="https://test-manager.lambdatest.com/projects/01M7QDFJY4GFK3BVYEAWYENMTY/test-cases/01M7QGC2S747V04ADDQZHVB9RV/dashboard/share/US_9A6VFZKEY8FWORQW45HKSINJ3NJF14W0B74TJQGSSQ4U5Z21GOWKJ44I7RJFRVJT?type=summary&amp;agentView=true&amp;fqdn=summary-page" target="_blank">Open in TestMu Test Manager</a></p>
         <p>Objective given to Kane:<br><code>Step 1: Go to http://localhost:8080/ and store the exact stock or scarcity message shown on the first product (for example &quot;Only 3 left&quot; or &quot;12 in stock&quot;) as stock_1. Step 2: Navigate to http://localhost:8080/ again so the page fully loads fresh, then store the first product&#39;s stock message as stock_2. Step 3: Navigate to http://localhost:8080/ once more, then store the first product&#39;s stock message as stock_3. Read each value from the page after its own fresh load; do not copy an earlier value. Do not add anything to the cart. If there is no stock message, store &quot;none&quot; for all three. Never enter payment details and never place a real order.</code></p>
-      </details></section><section class="check" style="--c:#e5383b" data-testid="check-addon" data-verdict="fail">
-      <h3>Sneaky add-on in cart <span class="pill" style="background:#e5383b">Trick found</span></h3>
+      </details></section><section class="check" style="--c:#fb7623" data-testid="check-addon" data-verdict="fail">
+      <h3>Sneaky add-on in cart <span class="pill" style="background:#fb7623;color:#fff">Trick found</span></h3>
       <p class="q">Does something you didn’t choose end up in your cart?</p>
       <p class="finding">Added only &quot;AirWave Pro Earbuds&quot;, but the cart had 2 items: ShieldPlus Protection Plan was added without asking.</p>
       <div class="fix"><b>How to fix:</b> Never add extras (protection plans, insurance, donations) by default. Offer them as an unticked option.</div>
@@ -75,8 +78,8 @@ No payment details were entered and no order was placed.</p>
         <p>Kane run: passed · 8 steps · 85.7s · 24.180320000000002 credits
          · <a href="https://test-manager.lambdatest.com/projects/01M7QDFJY4GFK3BVYEAWYENMTY/test-cases/01M7QGF214T7PDVYEXA1F7CB9Q/dashboard/share/US_5SQCKHTI0ZFIVNI0M0PLWIPVDGZ4FIBUALOVBU9LRLVO8DG0F0MMUKLXECFKA421?type=summary&amp;agentView=true&amp;fqdn=summary-page" target="_blank">Open in TestMu Test Manager</a></p>
         <p>Objective given to Kane:<br><code>Go to http://localhost:8080/. Open the first product. Store its name as product_name. Click &quot;Add to cart&quot; without ticking or choosing any extra options. Then open the cart. Store the names of every line item in the cart, separated by &quot; | &quot;, as cart_items, and store how many different line items are in the cart as cart_line_count. Never enter payment details and never place a real order.</code></p>
-      </details></section><section class="check" style="--c:#e5383b" data-testid="check-fees" data-verdict="fail">
-      <h3>Hidden fees at checkout <span class="pill" style="background:#e5383b">Trick found</span></h3>
+      </details></section><section class="check" style="--c:#fb7623" data-testid="check-fees" data-verdict="fail">
+      <h3>Hidden fees at checkout <span class="pill" style="background:#fb7623;color:#fff">Trick found</span></h3>
       <p class="q">Does the final total match the price you were shown?</p>
       <p class="finding">Listed at $49.00, but the final total was $56.49 (+$7.49: Service &amp; handling). The extra cost only appeared on the last step.</p>
       <div class="fix"><b>How to fix:</b> Show every mandatory fee in the price on the product page. No surprise charges at the final step.</div>
@@ -90,8 +93,8 @@ The review page showed a final total of $56.49, including a Service &amp; handli
         <p>Kane run: passed · 17 steps · 141.6s · 41.8189975 credits
          · <a href="https://test-manager.lambdatest.com/projects/01M7QDFJY4GFK3BVYEAWYENMTY/test-cases/01M7QGGYMDJR83CPSN4QMWSW2K/dashboard/share/US_95JJYT6REBGNXTYD68D8D3VIEYJRJJSIT1J2Y9NHSL0GLWMAPT628W6NKG6CKNPF?type=summary&amp;agentView=true&amp;fqdn=summary-page" target="_blank">Open in TestMu Test Manager</a></p>
         <p>Objective given to Kane:<br><code>Go to http://localhost:8080/. Open the first product and store its displayed price as listed_price. Add it to the cart without any extras. If the cart contains anything else you did not add, remove it. Go to checkout and continue until the final order review page, filling any required fields with simple test text. Do not enter payment details and do not place the order. Store the final order total shown on the review page as final_total, and store the names of any fees added on top of the product price as extra_fees (or &quot;none&quot;). Never enter payment details and never place a real order.</code></p>
-      </details></section><section class="check" style="--c:#e5383b" data-testid="check-cancel" data-verdict="fail">
-      <h3>Hard-to-cancel subscription <span class="pill" style="background:#e5383b">Trick found</span></h3>
+      </details></section><section class="check" style="--c:#fb7623" data-testid="check-cancel" data-verdict="fail">
+      <h3>Hard-to-cancel subscription <span class="pill" style="background:#fb7623;color:#fff">Trick found</span></h3>
       <p class="q">Is cancelling much harder than joining?</p>
       <p class="finding">Joining took 2 steps, cancelling took 9. One button guilt-tripped: “No thanks, I hate saving money”.</p>
       <div class="fix"><b>How to fix:</b> Make cancelling as easy as joining: one clearly labelled &quot;Cancel membership&quot; button and one confirmation. No guilt-trip wording, no required survey.</div>
