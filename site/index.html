@@ -2,63 +2,515 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ShopSniff — does this shop play fair?</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ShopSniff: is this shop lying to you?</title>
+<meta name="description" content="An AI agent shops like a real person in a real browser, catches dark patterns and scores the store, with proof. Verified by Kane CLI.">
+<meta name="theme-color" content="#05070a">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  :root{--ink:#14141a;--mut:#6c6c78;--bg:#f6f5f1;--card:#fff;--line:#e7e4dc;--brand:#1f6f4a;--red:#e5383b}
-  *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
-  main{max-width:860px;margin:0 auto;padding:40px 20px 70px}
-  .logo{font-weight:800;font-size:20px}
-  h1{font-size:clamp(32px,6vw,52px);line-height:1.05;margin:26px 0 12px;letter-spacing:-1px}
-  .lead{font-size:19px;color:var(--mut);max-width:620px}
-  .cta{display:flex;gap:10px;flex-wrap:wrap;margin:24px 0 40px}
-  .btn{background:var(--ink);color:#fff;text-decoration:none;font-weight:700;padding:12px 18px;border-radius:12px}
-  .btn.alt{background:#fff;color:var(--ink);border:1px solid var(--line)}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
-  .card b{display:block;margin-bottom:4px}.card p{margin:0;color:var(--mut);font-size:14px}
-  h2{margin:44px 0 12px;font-size:22px}
-  ol{padding-left:20px}li{margin-bottom:6px}
-  code{background:#ecebe5;padding:2px 6px;border-radius:6px;font-size:14px}
-  pre{background:var(--ink);color:#e9e9ee;padding:16px;border-radius:12px;overflow-x:auto;font-size:13px}
-  footer{margin-top:50px;color:var(--mut);font-size:13px}
+:root{
+  --bg:#05070a;--bg2:#0a0e12;--glass:#ffffff08;--glass2:#ffffff0d;--line:#ffffff14;--line2:#ffffff22;
+  --ink:#eef2f5;--mut:#8b96a1;--dim:#5b656f;
+  --good:#45f0a0;--good2:#19c37d;--cyan:#38d6ff;--bad:#ff3d55;--bad2:#c4122c;--amber:#ffc24a;
+  --r:18px;--font:'Space Grotesk',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;--mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+::selection{background:#45f0a055}
+
+/* ---------- atmosphere ---------- */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.38;mix-blend-mode:screen;animation:drift 26s ease-in-out infinite alternate}
+.b1{width:520px;height:520px;background:radial-gradient(circle,#0f8f5a,transparent 65%);top:-160px;right:-120px}
+.b2{width:460px;height:460px;background:radial-gradient(circle,#0b4e6e,transparent 65%);bottom:-180px;left:-140px;animation-duration:32s}
+.b3{width:340px;height:340px;background:radial-gradient(circle,#5a0f1c,transparent 65%);top:40%;left:55%;opacity:.25;animation-duration:38s}
+@keyframes drift{to{transform:translate(-60px,50px) scale(1.15)}}
+.grid{position:absolute;inset:0;background-image:linear-gradient(#ffffff05 1px,transparent 1px),linear-gradient(90deg,#ffffff05 1px,transparent 1px);background-size:34px 34px;mask-image:radial-gradient(ellipse at 50% 0%,#000 30%,transparent 75%)}
+.grain{position:fixed;inset:-50%;z-index:60;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");animation:grain 1.2s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}50%{transform:translate(-4%,3%)}100%{transform:translate(3%,-2%)}}
+
+/* ---------- ticker ---------- */
+.ticker{position:fixed;top:0;left:0;right:0;height:34px;z-index:40;display:flex;align-items:center;overflow:hidden;background:#05070acc;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line);font-family:var(--mono);font-size:11.5px;color:var(--mut)}
+.ticker .live{position:relative;z-index:2;flex:none;display:flex;align-items:center;gap:7px;padding:0 14px;height:100%;color:var(--good);font-weight:600;border-right:1px solid var(--line);background:#05070a}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 0 0 #45f0a0aa;animation:pulse 1.8s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 8px #45f0a000}100%{box-shadow:0 0 0 0 #45f0a000}}
+.track{display:flex;gap:36px;white-space:nowrap;padding-left:24px;animation:marquee 38s linear infinite}
+.track b{color:var(--ink);font-weight:600}.track .r{color:var(--bad)}.track .g{color:var(--good)}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+/* ---------- shell ---------- */
+.side{position:fixed;top:34px;bottom:0;left:0;width:248px;z-index:30;padding:26px 18px;display:flex;flex-direction:column;gap:6px;border-right:1px solid var(--line);background:linear-gradient(180deg,#070a0dcc,#05070aee);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px;letter-spacing:-.4px;margin:0 6px 22px}
+.nose{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:radial-gradient(circle at 30% 25%,#ffb3c8,#ff5d8f 60%,#c0245a);box-shadow:inset 0 -3px 6px #0004,0 6px 18px #ff4f8b44;position:relative}
+.nose:before,.nose:after{content:"";position:absolute;width:6px;height:8px;border-radius:50%;background:#5a0c26;top:11px}.nose:before{left:8px}.nose:after{right:8px}
+.nav a{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;color:var(--mut);font-weight:500;font-size:15px;position:relative;overflow:hidden;transition:color .25s,background .25s}
+.nav a svg{width:18px;height:18px;flex:none;opacity:.8}
+.nav a:hover{color:var(--ink);background:var(--glass)}
+.nav a.on{color:var(--ink);background:linear-gradient(90deg,#45f0a01a,#45f0a005);box-shadow:inset 0 0 0 1px #45f0a026}
+.nav a.on:before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:3px;background:var(--good);box-shadow:0 0 12px var(--good)}
+.side .foot{margin-top:auto;display:grid;gap:10px}
+.proof{padding:14px;border-radius:14px;background:var(--glass);border:1px solid var(--line);font-size:12.5px;color:var(--mut)}
+.proof b{display:block;font-size:22px;color:var(--good);letter-spacing:-.5px}
+.ghbtn{display:flex;justify-content:center;gap:8px;padding:10px;border-radius:12px;border:1px solid var(--line2);font-size:13px;font-weight:600}
+
+main{position:relative;z-index:1;margin-left:248px;padding:34px 0 0}
+.page{display:none;padding:56px 56px 90px;max-width:1180px}
+.page.on{display:block;animation:pagein .6s cubic-bezier(.2,.8,.2,1)}
+@keyframes pagein{from{opacity:0;filter:blur(12px);transform:translateY(14px)}to{opacity:1;filter:blur(0);transform:none}}
+
+.mbar{display:none}
+.pills{display:none}
+@media (max-width:900px){
+  .side{display:none}
+  main{margin-left:0}
+  .mbar{display:flex;position:sticky;top:34px;z-index:25;align-items:center;justify-content:space-between;padding:12px 18px;background:#05070acc;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+  .mbar .logo{margin:0;font-size:18px}
+  .pills{display:flex;position:fixed;z-index:35;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom));gap:4px;padding:6px;border-radius:99px;background:#0b0f13d9;border:1px solid var(--line2);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 14px 40px #000a;max-width:calc(100vw - 20px);overflow-x:auto;scrollbar-width:none}
+  .pills a{padding:9px 13px;border-radius:99px;font-size:13px;font-weight:600;color:var(--mut);white-space:nowrap}
+  .pills a.on{background:var(--good);color:#04130c}
+  .page{padding:28px 18px 120px}
+}
+
+/* ---------- shared ---------- */
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--good);padding:6px 12px;border-radius:99px;background:#45f0a010;border:1px solid #45f0a030}
+h1{font-size:clamp(42px,7vw,86px);line-height:.96;letter-spacing:-.045em;margin:20px 0 18px;font-weight:700}
+h2{font-size:clamp(28px,4vw,44px);letter-spacing:-.03em;margin:0 0 10px;line-height:1.05}
+.liq{background:linear-gradient(100deg,var(--good) 0%,var(--cyan) 35%,var(--good) 70%,var(--cyan) 100%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:liq 6s ease-in-out infinite}
+@keyframes liq{50%{background-position:100% 0}}
+.lead{font-size:clamp(16px,1.6vw,19px);line-height:1.55;color:var(--mut);max-width:620px;margin:0}
+.sub{color:var(--mut);margin:0 0 28px;max-width:640px;line-height:1.55}
+.ctas{display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 0}
+.btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:8px;padding:14px 20px;border-radius:14px;font-weight:600;font-size:15px;transition:transform .2s,box-shadow .3s}
+.btn:active{transform:scale(.97)}
+.btn.pri{background:linear-gradient(180deg,#6effb9,#2fd98a);color:#03140c;box-shadow:0 10px 30px #45f0a040,inset 0 1px 0 #fff8}
+.btn.pri:hover{box-shadow:0 14px 44px #45f0a066,inset 0 1px 0 #fff8}
+.btn.ghost{background:var(--glass);border:1px solid var(--line2)}
+.card{position:relative;overflow:hidden;border-radius:var(--r);background:linear-gradient(180deg,#ffffff0b,#ffffff04);border:1px solid var(--line);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.card:hover{border-color:var(--line2)}
+.ripple{position:absolute;border-radius:50%;pointer-events:none;transform:scale(0);background:radial-gradient(circle,#ffffff55,#45f0a022 45%,transparent 70%);animation:rip .75s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes rip{to{transform:scale(1);opacity:0}}
+.mono{font-family:var(--mono)}
+section+section{margin-top:72px}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .7s,transform .7s cubic-bezier(.2,.8,.2,1)}.reveal.in{opacity:1;transform:none}
+
+/* ---------- hero ---------- */
+.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center}
+@media (max-width:1100px){.hero{grid-template-columns:1fr}}
+.cases{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.case{padding:20px;display:flex;flex-direction:column;gap:14px;min-height:300px;cursor:pointer;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.case:hover{transform:translateY(-4px)}
+.case .top{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--mut);font-family:var(--mono)}
+.case h3{margin:0;font-size:18px;letter-spacing:-.3px}
+.case p{margin:0;font-size:13px;color:var(--mut);line-height:1.45}
+.case.bad{box-shadow:inset 0 0 0 1px #ff3d5522,0 30px 80px -40px #ff3d5566}
+.case.good{box-shadow:inset 0 0 0 1px #45f0a022,0 30px 80px -40px #45f0a066}
+@media (max-width:520px){.case{min-height:0;padding:16px}.cases{gap:10px}}
+
+/* liquid dial */
+.dial{--c:var(--good);--lv:50;position:relative;width:132px;height:132px;border-radius:50%;margin:4px auto 0;background:radial-gradient(circle at 50% 35%,#ffffff10,#ffffff03 60%);border:1px solid var(--line2);overflow:hidden;box-shadow:inset 0 8px 30px #0008,0 0 40px -10px var(--c)}
+.dial .liquid{position:absolute;left:-50%;right:-50%;bottom:0;height:calc(var(--lv)*1%);background:linear-gradient(180deg,var(--c),color-mix(in srgb,var(--c) 45%,#000));transition:height 1.6s cubic-bezier(.2,.8,.2,1)}
+.dial .liquid:before,.dial .liquid:after{content:"";position:absolute;left:0;right:0;top:-14px;height:18px;background:radial-gradient(14px 10px at 14px 14px,var(--c) 98%,transparent) 0 0/28px 18px repeat-x;animation:wave 2.4s linear infinite}
+.dial .liquid:after{opacity:.5;animation-duration:3.6s;animation-direction:reverse;top:-10px}
+@keyframes wave{to{background-position:28px 0}}
+.dial .num{position:absolute;inset:0;display:grid;place-items:center;text-align:center;z-index:2}
+.dial .num b{font-size:40px;letter-spacing:-2px;line-height:1;text-shadow:0 2px 14px #000c}.dial .num small{display:block;font-size:10px;font-family:var(--mono);color:#fffc;letter-spacing:.08em;margin-top:2px}
+.dial:after{content:"";position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 32% 22%,#ffffff40,transparent 32%);z-index:3;pointer-events:none}
+@media (max-width:520px){.dial{width:104px;height:104px}.dial .num b{font-size:32px}}
+
+.stamp{align-self:center;font-family:var(--mono);font-weight:700;font-size:22px;letter-spacing:.18em;padding:6px 14px;border:3px solid currentColor;border-radius:8px;transform:rotate(-8deg);mix-blend-mode:screen;text-shadow:0 0 18px currentColor;box-shadow:0 0 22px -6px currentColor,inset 0 0 14px -6px currentColor}
+.stamp.bad{color:var(--bad)}.stamp.good{color:var(--good)}
+.stamp.drop{animation:drop .55s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes drop{from{transform:rotate(-8deg) scale(2.4);opacity:0}to{transform:rotate(-8deg) scale(1);opacity:1}}
+@media (max-width:520px){.stamp{font-size:15px;padding:4px 9px;border-width:2px}}
+
+/* tricks */
+.tricks{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media (max-width:1100px){.tricks{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:520px){.tricks{grid-template-columns:1fr}}
+.trick{padding:18px;display:flex;flex-direction:column;gap:10px}
+.trick .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:19px;background:#ff3d5514;border:1px solid #ff3d5530}
+.trick h4{margin:0;font-size:16px;letter-spacing:-.2px}
+.trick p{margin:0;font-size:13px;color:var(--mut);line-height:1.45}
+.ev{margin-top:auto;font-family:var(--mono);font-size:12px;padding:8px 10px;border-radius:10px;background:#ff3d550f;border:1px dashed #ff3d5540;color:#ff9aa8}
+.ev span{color:var(--dim)}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:800px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{padding:18px}.stat b{display:block;font-size:34px;letter-spacing:-1.5px}.stat span{font-size:12.5px;color:var(--mut)}
+
+/* ---------- lab (replay) ---------- */
+.labhead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.seg{display:inline-flex;padding:4px;border-radius:12px;background:var(--glass);border:1px solid var(--line)}
+.seg button{padding:9px 14px;border-radius:9px;font-size:13px;font-weight:600;color:var(--mut)}
+.seg button.on{background:var(--ink);color:#05070a}
+.seg button.on.r{background:var(--bad);color:#fff}.seg button.on.g{background:var(--good);color:#03140c}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.chip{display:flex;align-items:center;gap:7px;padding:7px 11px;border-radius:99px;font-size:12.5px;border:1px solid var(--line);color:var(--mut);background:var(--glass);transition:all .3s}
+.chip i{width:8px;height:8px;border-radius:50%;background:var(--dim)}
+.chip.run{color:var(--ink);border-color:#38d6ff55}.chip.run i{background:var(--cyan);animation:pulse 1.2s infinite}
+.chip.fail{color:#ffb3bd;border-color:#ff3d5555}.chip.fail i{background:var(--bad)}
+.chip.pass{color:#b9ffda;border-color:#45f0a055}.chip.pass i{background:var(--good)}
+.stage{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:1000px){.stage{grid-template-columns:1fr}}
+.browser{display:flex;flex-direction:column;min-height:440px}
+.bbar{display:flex;align-items:center;gap:6px;padding:11px 13px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:11.5px;color:var(--mut)}
+.bbar i{width:9px;height:9px;border-radius:50%;background:#ffffff22}.bbar i:nth-child(1){background:#ff5f57}.bbar i:nth-child(2){background:#febc2e}.bbar i:nth-child(3){background:#28c840}
+.bbar .u{flex:1;margin-left:8px;padding:5px 10px;border-radius:8px;background:#00000055;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.viewport{position:relative;flex:1;margin:12px;border-radius:12px;overflow:hidden;background:#fff8e6;color:#16161a}
+.vp-bar{background:#e8202a;color:#fff;text-align:center;font-weight:700;font-size:13px;padding:8px}
+.vp-bar .t{font-family:var(--mono);background:#0003;padding:2px 7px;border-radius:5px;margin-left:4px}
+.vp-honest .vp-bar{background:#1d2b25}
+.vp-head{display:flex;justify-content:space-between;align-items:center;background:#16161a;color:#fff;padding:9px 12px;font-weight:800;font-size:15px}
+.vp-head span{color:#ffd23f}.vp-head small{font-weight:500;font-size:11px;opacity:.8}
+.vp-body{padding:14px;display:grid;gap:10px;font-size:13.5px}
+.vp-card{background:#fff;border:1px solid #eadfbf;border-radius:10px;padding:12px;display:grid;gap:6px}
+.vp-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #eadfbf}
+.vp-row.hl{background:#ffe3e6;margin:0 -8px;padding:7px 8px;border-radius:6px;border-bottom-color:transparent;color:#a0101f;font-weight:700;animation:hl 1s ease}
+@keyframes hl{0%{background:#ff3d55;color:#fff}}
+.vp-total{display:flex;justify-content:space-between;font-weight:800;font-size:17px;padding-top:6px}
+.vp-stock{font-weight:700;color:#e8202a;font-size:13px}.vp-honest .vp-stock{color:#11875d}
+.vp-btn{background:#e8202a;color:#fff;border-radius:8px;padding:9px;text-align:center;font-weight:700}
+.vp-click{list-style:none;margin:0;padding:0;display:grid;gap:5px;font-size:12.5px}
+.vp-click li{display:flex;gap:8px;align-items:center;padding:6px 8px;border-radius:7px;background:#fff;border:1px solid #eadfbf;animation:pop .35s cubic-bezier(.2,1.4,.4,1) both}
+.vp-click li b{font-family:var(--mono);font-size:11px;color:#8a7d5e;min-width:18px}
+.vp-click li.shame{background:#ffe3e6;border-color:#ffb1bb;color:#a0101f;font-weight:700}
+@keyframes pop{from{transform:scale(.8);opacity:0}}
+.vp-count{display:flex;gap:10px}.vp-count div{flex:1;background:#fff;border:1px solid #eadfbf;border-radius:10px;padding:10px;text-align:center}.vp-count b{font-size:30px;display:block;letter-spacing:-1px}
+.reload{position:absolute;inset:0;background:#fff;display:grid;place-items:center;z-index:5;opacity:0;pointer-events:none}
+.reload.go{animation:flash .9s ease}
+.reload:after{content:"↻ reloading";font-family:var(--mono);font-size:13px;color:#888}
+@keyframes flash{0%,100%{opacity:0}25%,60%{opacity:1}}
+.cursor{position:absolute;z-index:6;width:22px;height:22px;pointer-events:none;transition:left .7s cubic-bezier(.4,0,.2,1),top .7s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 2px 4px #0006)}
+.cursor.click:after{content:"";position:absolute;left:-10px;top:-10px;width:40px;height:40px;border-radius:50%;border:2px solid #38d6ff;animation:clk .5s ease-out forwards}
+@keyframes clk{from{transform:scale(.2);opacity:1}to{transform:scale(1.2);opacity:0}}
+.vstamp{position:absolute;z-index:7;right:14px;bottom:14px}
+.vstamp .stamp{background:#05070acc;mix-blend-mode:normal;font-size:15px}
+.big{position:absolute;inset:0;z-index:8;display:grid;place-items:center;background:#05070aa6;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.big .stamp{font-size:clamp(28px,5vw,46px);background:#05070a;mix-blend-mode:normal;padding:10px 22px;border-width:4px}
+.big small{display:block;text-align:center;font-family:var(--mono);margin-top:18px;color:#fff;font-size:13px}
+
+.term{display:flex;flex-direction:column;min-height:440px;background:linear-gradient(180deg,#05080bf2,#070b0ff2)}
+.term .bbar{justify-content:space-between}
+.tlog{flex:1;padding:14px 16px;font-family:var(--mono);font-size:12px;line-height:1.7;overflow:auto;max-height:520px;scroll-behavior:smooth}
+.tlog div{white-space:pre-wrap;word-break:break-word;animation:tin .25s ease both}
+@keyframes tin{from{opacity:0;transform:translateX(-6px)}}
+.tlog .p{color:var(--dim)}.tlog .cmd{color:var(--cyan)}.tlog .ok{color:#9ff5c9}.tlog .no{color:#ff8b9b}.tlog .end{color:var(--amber)}.tlog .vb{color:#fff;font-weight:600}.tlog .vr{color:var(--bad);font-weight:700}.tlog .vg{color:var(--good);font-weight:700}
+.caret{display:inline-block;width:8px;height:14px;background:var(--good);vertical-align:-2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.labfoot{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px;font-size:13px;color:var(--mut)}
+.labfoot a{color:var(--cyan)}
+
+@media (max-width:700px){
+  .browser,.term{min-height:0}.viewport{min-height:300px}.tlog{max-height:300px;font-size:11px}
+  .chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -18px 14px;padding:0 18px}.chip{flex:none}
+  .labhead .seg{width:100%}.labhead .seg button{flex:1}
+  .eyebrow{font-size:11px}
+}
+/* ---------- cases list ---------- */
+.list{display:grid;gap:10px}
+.row{display:flex;align-items:center;gap:16px;padding:14px 16px}
+.mini{--c:var(--good);--lv:50;width:56px;height:56px;flex:none;margin:0;box-shadow:inset 0 4px 14px #0008}
+.mini .num b{font-size:17px;letter-spacing:-.5px}.mini .num small{display:none}
+.row .t{flex:1;min-width:0}.row .t b{display:block}.row .t span{font-size:12.5px;color:var(--mut);font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.row .go{color:var(--mut);font-size:20px}
+.selftest{padding:22px;display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center;margin-bottom:22px}
+@media (max-width:600px){.selftest{grid-template-columns:1fr}}
+.st-table{display:grid;gap:6px;font-size:13.5px}
+.st-table div{display:grid;grid-template-columns:1fr auto auto;gap:14px;padding:8px 10px;border-radius:9px;background:var(--glass)}
+.st-table em{font-style:normal;font-family:var(--mono);font-size:12px}
+
+/* ---------- how / loop / install ---------- */
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;counter-reset:s}
+@media (max-width:900px){.flow{grid-template-columns:1fr 1fr}}@media (max-width:520px){.flow{grid-template-columns:1fr}}
+.step{padding:20px;counter-increment:s}
+.step:before{content:"0" counter(s);font-family:var(--mono);color:var(--good);font-size:12px}
+.step h4{margin:10px 0 6px;font-size:17px}.step p{margin:0;color:var(--mut);font-size:13.5px;line-height:1.5}
+.step code{font-family:var(--mono);font-size:11.5px;color:var(--cyan)}
+.timeline{position:relative;display:grid;gap:14px;padding-left:28px}
+.timeline:before{content:"";position:absolute;left:8px;top:6px;bottom:6px;width:2px;background:linear-gradient(var(--bad),var(--amber),var(--good))}
+.tl{padding:18px 20px;position:relative;overflow:visible}
+.tl:before{content:"";position:absolute;left:-26px;top:24px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:3px solid var(--c,var(--amber));box-shadow:0 0 12px var(--c,var(--amber))}
+.tl .h{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--mut)}
+.tl h4{margin:8px 0 8px;font-size:17px}
+.tl .kv{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:13.5px;line-height:1.45}
+.tl .kv span{font-family:var(--mono);font-size:11px;color:var(--dim);padding-top:2px}
+.tl q{color:#ffb3bd;font-family:var(--mono);font-size:12.5px}
+pre.code{margin:0;padding:18px;border-radius:14px;background:#05080b;border:1px solid var(--line);font-family:var(--mono);font-size:12.5px;line-height:1.7;overflow:auto;color:#cfe3d8;position:relative}
+pre.code .c{color:var(--dim)}
+.copy{position:absolute;top:10px;right:10px;font-size:11.5px;font-family:var(--mono);padding:6px 10px;border-radius:8px;background:var(--glass2);border:1px solid var(--line2)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media (max-width:900px){.two{grid-template-columns:1fr}}
+footer{margin-top:80px;padding-top:24px;border-top:1px solid var(--line);color:var(--dim);font-size:12.5px;line-height:1.6}
 </style>
 </head>
 <body>
+<div class="bg"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="grid"></div></div>
+<div class="grain"></div>
+
+<div class="ticker"><div class="live"><span class="pulse"></span>LIVE</div><div class="track" id="ticker"></div></div>
+
+<aside class="side">
+  <a class="logo" href="#home"><span class="nose"></span>ShopSniff</a>
+  <nav class="nav" id="nav"></nav>
+  <div class="foot">
+    <div class="proof"><b id="sideSelf">5/5</b>Self-test passing. Every result comes from a real Kane CLI run.</div>
+    <a class="ghbtn" id="gh" target="_blank" rel="noopener">★ View on GitHub</a>
+  </div>
+</aside>
+
+<div class="mbar"><a class="logo" href="#home"><span class="nose"></span>ShopSniff</a><a class="ghbtn" id="gh2" target="_blank" rel="noopener" style="padding:7px 12px">GitHub</a></div>
+
 <main>
-  <div class="logo">🐽 ShopSniff</div>
-  <h1>Is this shop lying to you?</h1>
-  <p class="lead">An AI agent shops like a real person in a real browser, catches the tricks, and gives the store an honesty score with evidence. Every check is run by <b>Kane CLI</b>.</p>
-  <div class="cta">
-    <a class="btn" href="reports/index.html">See the reports</a>
-    <a class="btn alt" href="shop/">Shady demo store</a>
-    <a class="btn alt" href="shop/?fixed">Honest demo store</a>
-  </div>
+<!-- ============ HOME ============ -->
+<div class="page" id="p-home">
+  <section class="hero">
+    <div>
+      <span class="eyebrow"><span class="pulse"></span><span id="heroTag">Verified by Kane CLI</span></span>
+      <h1>Is this shop <span class="liq">lying</span> to you?</h1>
+      <p class="lead">ShopSniff sends an AI agent into an online store. It shops like a real person in a real browser, catches the tricks and scores the store, with proof from every step.</p>
+      <div class="ctas"><a class="btn pri" href="#lab">▶ Watch Kane sniff</a><a class="btn ghost" href="#cases">Open the case files</a></div>
+    </div>
+    <div class="cases" id="caseCards"></div>
+  </section>
 
-  <h2>The five tricks it sniffs out</h2>
-  <div class="grid">
-    <div class="card"><b>⏱️ Fake countdown</b><p>Waits, reloads, and checks if “Sale ends in 14:59” starts over.</p></div>
-    <div class="card"><b>🔥 Fake scarcity</b><p>Reloads three times. If “Only 3 left” keeps changing, it’s made up.</p></div>
-    <div class="card"><b>🛒 Sneaky add-on</b><p>Adds one item and checks if anything else ended up in the cart.</p></div>
-    <div class="card"><b>💸 Hidden fees</b><p>Goes all the way to the order review and compares the total with the listed price.</p></div>
-    <div class="card"><b>🔒 Cancel maze</b><p>Joins the membership, then cancels it, counting every step and any guilt-trip buttons.</p></div>
-  </div>
+  <section class="reveal">
+    <h2>Five tricks it sniffs out</h2>
+    <p class="sub">Each one is a mission Kane carries out in a real browser. The red boxes show what it actually saw in DealDrop, our shady demo store.</p>
+    <div class="tricks" id="tricks"></div>
+  </section>
 
-  <h2>How it works</h2>
-  <ol>
-    <li>ShopSniff gives Kane CLI five plain-English missions (<code>kane-cli run "…" --agent --headless</code>).</li>
-    <li>Kane does each one in a real Chrome and stores what it saw (<code>store … as …</code>).</li>
-    <li>ShopSniff judges the evidence, scores the shop, and writes a report plus <code>fixes.md</code>.</li>
-    <li>Store owner? Give <code>fixes.md</code> to your coding agent, fix the code, and sniff again until it scores 100.</li>
-  </ol>
-  <pre>npm install -g @testmuai/kane-cli && kane-cli login
+  <section class="reveal">
+    <div class="stats" id="stats"></div>
+  </section>
+
+  <footer>ShopSniff never enters payment details or places real orders. DealDrop is a fictional store built to test it. Built for the Kane CLI Online Hackathon by TestMu AI.</footer>
+</div>
+
+<!-- ============ LAB ============ -->
+<div class="page" id="p-lab">
+  <div class="labhead">
+    <div><span class="eyebrow">Replay of a real Kane run</span><h2 style="margin-top:14px">Watch Kane sniff a store</h2><p class="sub" style="margin:0">Left: what Kane did in the browser. Right: Kane's real event log from GitHub Actions, line for line.</p></div>
+    <div class="seg" id="storeSeg"><button data-s="shady" class="on r">Shady store</button><button data-s="honest">Honest store</button></div>
+  </div>
+  <div class="chips" id="chips"></div>
+  <div class="stage">
+    <div class="card browser">
+      <div class="bbar"><i></i><i></i><i></i><span class="u" id="vpUrl">localhost:8080</span></div>
+      <div class="viewport" id="vp"></div>
+    </div>
+    <div class="card term">
+      <div class="bbar"><span>kane-cli run --agent --headless</span><span id="tClock">0.0s</span></div>
+      <div class="tlog" id="tlog"></div>
+    </div>
+  </div>
+  <div class="labfoot"><button class="btn ghost" id="replay" style="padding:10px 14px">↻ Replay</button><div class="seg" id="speedSeg"><button data-x="1" class="on">1×</button><button data-x="2">2×</button><button data-x="4">4×</button></div><span id="labLinks"></span></div>
+</div>
+
+<!-- ============ CASES ============ -->
+<div class="page" id="p-cases">
+  <span class="eyebrow">Case files</span><h2 style="margin-top:14px">Every Kane run, on the record</h2>
+  <p class="sub">Each case is a full report: score, findings, the values Kane stored, links to the run in TestMu Test Manager, and a fixes.md for a coding agent.</p>
+  <div class="card selftest" id="selftest"></div>
+  <div class="list" id="caseList"></div>
+</div>
+
+<!-- ============ HOW ============ -->
+<div class="page" id="p-how">
+  <span class="eyebrow">How it works</span><h2 style="margin-top:14px">Kane is the product, not the afterthought</h2>
+  <p class="sub">ShopSniff doesn't scrape. It gives Kane CLI plain-English missions, Kane carries them out like a shopper, and ShopSniff only trusts values Kane actually observed.</p>
+  <div class="flow">
+    <div class="card step"><h4>Five missions</h4><p>Each check is one objective, e.g. <code>"wait 10 seconds, navigate again, store the countdown as timer_after_reload"</code>.</p></div>
+    <div class="card step"><h4>Kane shops</h4><p><code>kane-cli run "…" --agent --headless</code> drives a real Chrome and stores what it sees with <code>store … as …</code>.</p></div>
+    <div class="card step"><h4>Evidence, not vibes</h4><p>ShopSniff reads <code>final_state</code> and Kane's step log. No reload in the log means no verdict. Clicks are counted from Kane's own actions.</p></div>
+    <div class="card step"><h4>Score + fix list</h4><p>An honesty score, a report with TestMu links, and <code>fixes.md</code> for your coding agent. Fix the store and run again until it scores 100.</p></div>
+  </div>
+  <section class="reveal" style="margin-top:56px">
+    <h2>How do we know ShopSniff is right?</h2>
+    <p class="sub">A known-answer test runs on every push. DealDrop's shady mode has all five tricks and <span class="mono">?fixed</span> has none. The self-test passes only if Kane flags 5/5 in the shady store <b>and</b> 0/5 in the honest one.</p>
+    <div class="ctas" style="margin-top:0"><a class="btn ghost" href="shop/" target="_blank">Open shady DealDrop ↗</a><a class="btn ghost" href="shop/?fixed" target="_blank">Open honest DealDrop ↗</a></div>
+  </section>
+</div>
+
+<!-- ============ LOOP ============ -->
+<div class="page" id="p-loop">
+  <span class="eyebrow">Kane ↔ agent</span><h2 style="margin-top:14px">Kane caught our own bugs. The agent fixed them.</h2>
+  <p class="sub">ShopSniff was built with Claude as the coding agent and verified by Kane in GitHub Actions on every push. The agent read Kane's NDJSON output and pushed a fix each time, until the self-test went green.</p>
+  <div class="timeline" id="timeline"></div>
+</div>
+
+<!-- ============ INSTALL ============ -->
+<div class="page" id="p-install">
+  <span class="eyebrow">Run it yourself</span><h2 style="margin-top:14px">Sniff any shop in two commands</h2>
+  <p class="sub">You need Node 18+ and a TestMu AI account for Kane CLI.</p>
+  <div class="two">
+    <pre class="code"><button class="copy">copy</button><span class="c"># install + log in</span>
+npm install -g @testmuai/kane-cli
+kane-cli login
+
+<span class="c"># sniff a shop</span>
+git clone https://github.com/Redoxwork/shopsniff
+cd shopsniff
 node shopsniff.mjs https://some-shop.example
-node shopsniff.mjs selftest https://&lt;this-site&gt;/shop/   # proves ShopSniff itself is right</pre>
 
-  <h2>How do we know ShopSniff is right?</h2>
-  <p>A known-answer test. DealDrop, the demo store, has every trick in its shady version and none in its honest version (<code>?fixed</code>). The self-test runs all five Kane checks on both and passes only if every trick is flagged in the shady store <i>and</i> nothing is flagged in the honest one. See <a href="reports/SELFTEST.md">SELFTEST.md</a>.</p>
-
-  <footer>Built for the Kane CLI Online Hackathon by TestMu AI. DealDrop is a fictional store; ShopSniff never pays or places real orders.</footer>
+<span class="c"># prove ShopSniff itself is right</span>
+npm run shop &amp;
+npm run selftest</pre>
+    <pre class="code"><button class="copy">copy</button><span class="c"># .github/workflows/shopsniff.yml (excerpt)</span>
+- run: npm install -g @testmuai/kane-cli
+- run: kane-cli login --username "$KANE_USERNAME" \
+         --access-key "$KANE_ACCESS_KEY"
+- run: node shopsniff.mjs selftest http://localhost:8080/
+<span class="c"># reports are committed + published to Pages</span>
+<span class="c"># a failed self-test fails the build</span></pre>
+  </div>
+  <section style="margin-top:40px">
+    <div class="card" style="padding:22px">
+      <h4 style="margin:0 0 6px;font-size:17px">For store owners and their coding agents</h4>
+      <p class="sub" style="margin:0">Every report includes <span class="mono">fixes.md</span>. Give it to your agent (see <span class="mono">AGENTS.md</span>), fix the store, and run ShopSniff again. The work is done when Kane scores it 100.</p>
+    </div>
+  </section>
+</div>
 </main>
+
+<nav class="pills" id="pills"></nav>
+
+<script>
+const PAGES=[['home','Home','M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z'],['lab','Live replay','M8 5v14l11-7z'],['cases','Case files','M4 4h6l2 2h8v14H4z'],['how','How it works','M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zm0 5v5l3 2'],['loop','Kane ↔ Agent','M4 12a8 8 0 0 1 14-5l2-2v6h-6l2-2a5 5 0 1 0 1 6'],['install','Install','M12 3v12m0 0l-4-4m4 4l4-4M5 21h14']];
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let D=null;
+
+/* ---------- nav / pages ---------- */
+$('#nav').innerHTML=PAGES.map(([id,l,d])=>`<a href="#${id}" data-p="${id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${d}"/></svg>${l}</a>`).join('');
+$('#pills').innerHTML=PAGES.map(([id,l])=>`<a href="#${id}" data-p="${id}">${l}</a>`).join('');
+function show(){
+  const id=(location.hash.slice(1)||'home'); const p=PAGES.find(x=>x[0]===id)?id:'home';
+  $$('.page').forEach(x=>x.classList.toggle('on',x.id==='p-'+p));
+  $$('[data-p]').forEach(a=>a.classList.toggle('on',a.dataset.p===p));
+  window.scrollTo({top:0});
+  if(p==='lab'&&D) startReplay();
+  else stopReplay();
+  setTimeout(observe,50);
+}
+addEventListener('hashchange',show);
+
+/* ---------- liquid tap ripple ---------- */
+addEventListener('pointerdown',e=>{
+  const t=e.target.closest('.btn,.card,.nav a,.pills a,.seg button,.ghbtn'); if(!t) return;
+  const r=t.getBoundingClientRect(), s=Math.max(r.width,r.height)*2.2, d=el('span','ripple');
+  Object.assign(d.style,{width:s+'px',height:s+'px',left:(e.clientX-r.left-s/2)+'px',top:(e.clientY-r.top-s/2)+'px'});
+  if(getComputedStyle(t).position==='static') t.style.position='relative';
+  t.appendChild(d); setTimeout(()=>d.remove(),800);
+});
+/* scroll reveal */
+let io; function observe(){ io?.disconnect(); io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}}),{threshold:.12}); $$('.page.on .reveal:not(.in)').forEach(x=>io.observe(x)); }
+
+/* ---------- helpers ---------- */
+const ago=iso=>{const m=Math.round((Date.now()-new Date(iso))/60000);return m<1?'just now':m<60?m+' min ago':m<1440?Math.round(m/60)+' h ago':Math.round(m/1440)+' d ago'};
+const dial=(score,cls='')=>{const c=score>=75?'var(--good)':score>=50?'var(--amber)':'var(--bad)';const lv=score==null?0:Math.max(8,score);return `<div class="dial ${cls}" style="--c:${c};--lv:0" data-lv="${lv}"><div class="liquid"></div><div class="num"><div><b data-count="${score??0}">0</b><small>HONESTY</small></div></div></div>`};
+function fillDials(root=document){ $$('.dial').forEach(d=>{ if(root.contains(d)&&d.dataset.lv&&!d.dataset.done){ d.dataset.done=1; requestAnimationFrame(()=>d.style.setProperty('--lv',d.dataset.lv)); const b=d.querySelector('[data-count]'); const to=+b.dataset.count; let t0; const f=t=>{t0??=t;const k=Math.min(1,(t-t0)/1400);b.textContent=Math.round(to*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(f)}; requestAnimationFrame(f);} }); }
+const pick=(st,k)=>st?.[k]??'';
+const ICON={timer:'⏱',stock:'🔥',addon:'🛒',fees:'💸',cancel:'🔒'};
+const BLURB={timer:'Waits 10 seconds, loads the page fresh, and checks if "Sale ends in…" started over.',stock:'Loads the page three times. If "Only N left" keeps changing with no sales, it\'s made up.',addon:'Adds one item with no extras ticked, then checks what is really in the cart.',fees:'Goes all the way to the order review (never pays) and compares the total with the listed price.',cancel:'Joins the membership, then cancels it. ShopSniff counts Kane\'s own clicks for each.'};
+function evidence(r){const s=r.stored||{};switch(r.id){
+  case 'timer':return `${esc(pick(s,'timer_first'))} <span>→ reload →</span> ${esc(pick(s,'timer_after_reload'))}`;
+  case 'stock':return ['stock_1','stock_2','stock_3'].map(k=>(String(pick(s,k)).match(/\d+/)||['?'])[0]).join(' <span>→</span> ')+' <span>left</span>';
+  case 'addon':return esc(String(pick(s,'cart_items')).split('|').slice(1).join(', ').trim()||pick(s,'cart_items'))+' <span>added for you</span>';
+  case 'fees':return `${esc(pick(s,'listed_price'))} <span>→</span> ${esc(pick(s,'final_total'))}`;
+  case 'cancel':return `${(s.join_clicks||[]).length} <span>clicks to join ·</span> ${(s.cancel_clicks||[]).length} <span>to cancel</span>`;}}
+
+/* ---------- render data ---------- */
+function render(){
+  const sh=D.shady, ho=D.honest;
+  $('#gh').href=$('#gh2').href=D.repo;
+  const st=D.selftest; $('#sideSelf').textContent=st?`${st.passed}/${st.total}`:'—';
+  $('#heroTag').textContent=`Verified by Kane CLI · ${st?st.passed+'/'+st.total+' self-test':''} · ${ago(D.generated)}`;
+  const t=[`<b>DealDrop (shady)</b> <span class="r">${sh?.score??'—'}/100 · ${sh?.flags??0} tricks</span>`,`<b>DealDrop (honest)</b> <span class="g">${ho?.score??'—'}/100 · plays fair</span>`,`self-test <b class="g">${st?st.passed+'/'+st.total:'—'}</b>`,`<b>${D.kaneRuns}</b> Kane missions run`,`<b>${D.credits}</b> Kane credits used`,...(sh?.results||[]).filter(r=>r.verdict==='fail').map(r=>`<span class="r">🚩 ${esc(r.title)}</span>`),`last run <b>${ago(D.generated)}</b>`];
+  $('#ticker').innerHTML=(t.join('')+t.join('')).replace(/<\/span>|<\/b>(?=<)/g,m=>m);
+  $('#ticker').innerHTML=[...t,...t].map(x=>`<span>${x}</span>`).join('');
+  $('#caseCards').innerHTML=[sh&&caseCard(sh,'bad'),ho&&caseCard(ho,'good')].filter(Boolean).join('');
+  $$('#caseCards .case').forEach(c=>c.onclick=()=>location.href=c.dataset.href);
+  $('#tricks').innerHTML=(sh?.results||[]).map(r=>`<div class="card trick reveal"><div class="ic">${ICON[r.id]}</div><h4>${esc(r.title)}</h4><p>${BLURB[r.id]}</p><div class="ev">${evidence(r)}</div></div>`).join('');
+  $('#stats').innerHTML=[[D.kaneRuns,'Kane missions run in real Chrome'],[st?st.passed+'/'+st.total:'—','self-test checks correct'],[(sh?.results||[]).reduce((n,r)=>n+(r.steps||[]).filter(s=>s.s==='done').length,0),'browser steps in the latest shady run'],['0','human clicks needed']].map(([b,s])=>`<div class="card stat reveal"><b>${b}</b><span>${s}</span></div>`).join('');
+  const lst=$('#selftest'); lst.innerHTML=`<div>${dial(st?Math.round(100*st.passed/st.total):null)}</div><div><h3 style="margin:0 0 4px">Self-test: ${st?st.passed+'/'+st.total:'—'} checks correct</h3><p class="sub" style="margin:0 0 12px">Shady store must be flagged, honest store must pass. Ran ${st?.when?ago(st.when):'—'}.</p><div class="st-table">${(sh?.results||[]).map(r=>{const h=ho?.results.find(x=>x.id===r.id);const ok=r.verdict==='fail'&&h?.verdict==='pass';return `<div><span>${ICON[r.id]} ${esc(r.title)}</span><em style="color:${r.verdict==='fail'?'var(--bad)':'var(--mut)'}">${r.verdict==='fail'?'flagged':r.verdict}</em><em style="color:${h?.verdict==='pass'?'var(--good)':'var(--mut)'}">${h?.verdict==='pass'?'fair':h?.verdict||'—'} ${ok?'✅':'❌'}</em></div>`}).join('')}</div></div>`;
+  $('#selftest .dial').classList.add('mini'); $('#selftest .dial').style.width=$('#selftest .dial').style.height='110px';
+  $('#caseList').innerHTML=D.reports.map(r=>`<a class="card row" href="reports/${encodeURIComponent(r.id)}/index.html">${dial(r.score,'mini')}<div class="t"><b>${esc(r.name)}</b><span>${esc(r.verdict)} · ${r.flags} trick${r.flags===1?'':'s'} · ${ago(r.created)}</span></div><span class="go">→</span></a>`).join('');
+  $('#timeline').innerHTML=LOOP.map(x=>`<div class="card tl reveal" style="--c:${x.c}"><div class="h"><span>${x.run}</span><span>${x.commit}</span></div><h4>${x.h}</h4><div class="kv"><span>KANE</span><div>${x.kane}</div><span>AGENT</span><div>${x.agent}</div></div></div>`).join('');
+  fillDials();
+}
+function caseCard(r,k){const good=k==='good';return `<div class="card case ${k}" data-href="reports/${encodeURIComponent(r.id)}/index.html"><div class="top"><span>CASE · ${good?'HONEST':'SHADY'}</span><span>${ago(r.created)}</span></div>${dial(r.score)}<span class="stamp ${k}">${good?'CLEARED':'GUILTY'}</span><h3>${good?'Honest DealDrop':'Shady DealDrop'}</h3><p>${good?'No tricks found. Every check passed in a real browser.':`${r.flags} tricks caught by Kane. Open the case file →`}</p></div>`}
+
+const LOOP=[
+ {run:'Kane run 1',commit:'8fd8e35',c:'var(--dim)',h:'First push',kane:'Didn\'t start: the Kane login secrets were missing.',agent:'Added the GitHub Actions workflow, secrets and Pages.'},
+ {run:'Kane run 2',commit:'301e10f',c:'var(--bad)',h:'5/5 tricks caught, but 2 honest checks came back empty',kane:'<q>browser page was closed while the system was trying to take a screenshot</q> and an empty <span class="mono">final_state</span>.',agent:'Retry a Kane run that ends without evidence, and call it inconclusive instead of "not present".'},
+ {run:'Kane run 3',commit:'4f0774d',c:'var(--bad)',h:'Cancel check failed on both stores',kane:'<q>the test could not read its recorded click history</q>. Kane can\'t report its own clicks.',agent:'Stopped asking Kane to count. ShopSniff now counts Kane\'s own <span class="mono">click:</span>/<span class="mono">type:</span> actions from the NDJSON stream.'},
+ {run:'Kane run 4',commit:'ad4d28e',c:'var(--amber)',h:'The shady stock check passed. That was a false negative.',kane:'The step log showed Kane read the page once and stored the same value three times. It never reloaded.',agent:'The missions now require fresh page loads, and ShopSniff counts <span class="mono">navigate</span> steps in Kane\'s log. No reload means no verdict.'},
+ {run:'Kane run 5',commit:'green ✅',c:'var(--good)',h:'Self-test 5/5. Shady 0/100, honest 100/100.',kane:'All 10 missions completed with evidence. Each one links to its TestMu Test Manager run.',agent:'Shipped. Kane now runs on every push to keep it that way.'},
+];
+
+/* ---------- replay engine ---------- */
+let store='shady', speed=1, timers=[], running=false, t0=0, clockT;
+const wait=ms=>new Promise(r=>{const id=setTimeout(r,ms/speed);timers.push(id)});
+function stopReplay(){timers.forEach(clearTimeout);timers=[];running=false;clearInterval(clockT)}
+const vp=()=>$('#vp'), log=(cls,txt)=>{const d=el('div',cls);d.innerHTML=txt;$('#tlog').appendChild(d);$('#tlog').scrollTop=1e6};
+function cursorTo(x,y,click){let c=$('#vp .cursor');if(!c){c=el('div','cursor','<svg viewBox="0 0 24 24" width="22" height="22"><path d="M3 2l7 19 2.6-7.4L20 11z" fill="#fff" stroke="#000" stroke-width="1.5"/></svg>');vp().appendChild(c)}c.style.left=x+'%';c.style.top=y+'%';if(click){c.classList.remove('click');void c.offsetWidth;c.classList.add('click')}}
+const shell=(body,bar)=>`<div class="vp-head"><div>Deal<span>Drop</span></div><small>Shop · Club · Account · Cart</small></div>${bar?`<div class="vp-bar">BLACK FRIDAY MEGASALE · Sale ends in <span class="t" id="vt">${bar}</span></div>`:''}<div class="vp-body" id="vb">${body}</div><div class="reload" id="rl"></div>`;
+const reload=async()=>{const r=$('#rl');r.classList.remove('go');void r.offsetWidth;r.classList.add('go');await wait(500)};
+const stampOn=(ok,txt)=>{const s=el('div','vstamp',`<span class="stamp drop ${ok?'good':'bad'}">${txt}</span>`);vp().appendChild(s)};
+
+const SCENES={
+ async timer(r,s){vp().innerHTML=shell(`<div class="vp-card"><b>AirWave Pro Earbuds</b><div>$49.00</div></div><div class="vp-card"><b>PulseFit Smartwatch</b><div>$79.00</div></div>`,esc(pick(s,'timer_first'))||'14:59');
+  await wait(1700);cursorTo(70,6,true);await wait(900);await reload();$('#vt').textContent=pick(s,'timer_after_reload')||'—';$('#vt').style.cssText='background:#fff;color:#e8202a;box-shadow:0 0 0 3px #ffd23f';await wait(1300)},
+ async stock(r,s){vp().innerHTML=shell(`<div class="vp-card"><b>AirWave Pro Earbuds</b><div>$49.00</div><div class="vp-stock" id="vs">${esc(pick(s,'stock_1'))}</div></div>`,null);
+  for(const k of ['stock_2','stock_3']){await wait(1300);await reload();const v=$('#vs');v.textContent=pick(s,k);v.style.animation='none';void v.offsetWidth;v.style.animation='hl 1s ease'}await wait(1000)},
+ async addon(r,s){const items=String(pick(s,'cart_items')).split('|').map(x=>x.trim()).filter(Boolean);
+  vp().innerHTML=shell(`<div class="vp-card"><b>${esc(pick(s,'product_name')||'AirWave Pro Earbuds')}</b><div>$49.00</div><div class="vp-btn">Add to cart</div></div>`,null);
+  await wait(1000);cursorTo(50,52,true);await wait(900);$('#vb').innerHTML=`<div class="vp-card"><b>Your cart</b><div id="cl"></div></div>`;
+  for(const [i,it] of items.entries()){await wait(650);$('#cl').appendChild(el('div','vp-row'+(i>0?' hl':''),`<span>${esc(it)}</span><span>${i>0?'not added by you':'×1'}</span>`))}await wait(900)},
+ async fees(r,s){vp().innerHTML=shell(`<div class="vp-card"><b>AirWave Pro Earbuds</b><div style="font-size:22px;font-weight:800">${esc(pick(s,'listed_price'))}</div><div style="font-size:12px;color:#666">Free shipping · Price includes all fees</div><div class="vp-btn">Add to cart</div></div>`,null);
+  await wait(1400);cursorTo(50,60,true);await wait(700);$('#vb').innerHTML=`<div class="vp-card"><b>Checkout · step 1 of 2</b><div class="vp-btn">Continue to review</div></div>`;await wait(900);cursorTo(50,40,true);await wait(600);
+  const fee=String(pick(s,'extra_fees'));const has=fee&&!/^none$/i.test(fee);
+  $('#vb').innerHTML=`<div class="vp-card"><b>Review your order</b><div class="vp-row"><span>AirWave Pro Earbuds</span><span>${esc(pick(s,'listed_price'))}</span></div><div class="vp-row"><span>Shipping</span><span>FREE</span></div>${has?`<div class="vp-row hl"><span>${esc(fee)}</span><span>surprise!</span></div>`:''}<div class="vp-total"><span>Order total</span><span>${esc(pick(s,'final_total'))}</span></div></div>`;await wait(1400)},
+ async cancel(r,s){const J=s.join_clicks||[],C=s.cancel_clicks||[];const shame=/hate|no thanks|don.?t want/i;
+  vp().innerHTML=shell(`<div class="vp-count"><div><small>JOIN</small><b id="jc">0</b></div><div><small>CANCEL</small><b id="cc" style="color:#e8202a">0</b></div></div><ul class="vp-click" id="ck"></ul>`,null);
+  const add=(t,i,isC)=>{const li=el('li',shame.test(t)?'shame':'',`<b>${isC?'C':'J'}${i+1}</b>${esc(t.replace(/^Clicking\s*/i,''))}`);$('#ck').appendChild(li);if($('#ck').children.length>7)$('#ck').firstChild.remove()};
+  for(const [i,t] of J.entries()){await wait(450);add(t,i,0);$('#jc').textContent=i+1}
+  for(const [i,t] of C.entries()){await wait(420);add(t,i,1);$('#cc').textContent=i+1}await wait(900)},
+};
+function chipState(id,cls){const c=$(`#chips [data-c="${id}"]`);if(c)c.className='chip '+cls}
+async function startReplay(){
+  stopReplay(); running=true; const R=D[store]; if(!R){$('#tlog').textContent='No report yet.';return}
+  vp().className='viewport'+(store==='honest'?' vp-honest':''); $('#vpUrl').textContent='localhost:8080/'+(store==='honest'?'?fixed':'');
+  $('#chips').innerHTML=R.results.map(r=>`<span class="chip" data-c="${r.id}"><i></i>${ICON[r.id]} ${esc(r.title)}</span>`).join('');
+  $('#tlog').innerHTML=''; t0=performance.now(); clockT=setInterval(()=>$('#tClock').textContent=((performance.now()-t0)/1000*speed).toFixed(1)+'s',100);
+  $('#labLinks').innerHTML=`<a href="reports/${encodeURIComponent(R.id)}/index.html">Open the full case file →</a>`;
+  log('p',`# ShopSniff → ${esc(R.url)}  (${R.results.length} missions, replay of ${new Date(R.created).toUTCString()})`);
+  for(const r of R.results){
+    if(!running) return; chipState(r.id,'run');
+    log('cmd',`$ kane-cli run "${esc(r.title)}…" --agent --headless`);
+    const lines=(r.steps||[]).filter(x=>!/^wait: Waiting after|^analyze: ANALYZE\(analyze_v3/.test(x.r));
+    // stream Kane's real step remarks while the scene plays
+    let i=0; const iv=setInterval(()=>{ if(i<lines.length-1){const x=lines[i++];log(x.s==='failed'?'no':'ok',`${x.s==='failed'?'✗':'✓'} ${esc(x.r)}`)} }, 520/speed); timers.push(iv);
+    await (SCENES[r.id]?.(r,r.stored||{})||wait(1500));
+    clearInterval(iv); while(i<lines.length){const x=lines[i++];log(x.s==='end'?'end':x.s==='failed'?'no':'ok',`${x.s==='end'?'↳':x.s==='failed'?'✗':'✓'} ${esc(x.r)}`)}
+    const fail=r.verdict==='fail', pass=r.verdict==='pass';
+    log(fail?'vr':pass?'vg':'vb',`${fail?'🚩 TRICK':pass?'✅ FAIR':'❔ '+r.verdict.toUpperCase()} · ${esc(r.finding)}`);
+    if(r.test_url) log('p',`  ↗ TestMu run: ${esc(r.test_url.slice(0,64))}…`);
+    chipState(r.id,fail?'fail':pass?'pass':''); stampOn(!fail,fail?'TRICK':'FAIR'); await wait(1300);
+    $$('#vp .vstamp').forEach(x=>x.remove());
+  }
+  const good=R.score>=75; const b=el('div','big',`<div><span class="stamp drop ${good?'good':'bad'}">${good?'CLEARED':'GUILTY'}</span><small>Honesty score ${R.score}/100</small></div>`); vp().appendChild(b);
+  log(good?'vg':'vr',`\nHonesty score: ${R.score}/100 (${esc(R.verdict)})`); log('p','<span class="caret"></span>'); clearInterval(clockT);
+}
+$('#storeSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;store=b.dataset.s;$$('#storeSeg button').forEach(x=>x.className=x===b?('on '+(store==='shady'?'r':'g')):'');startReplay()};
+$('#speedSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;speed=+b.dataset.x;$$('#speedSeg button').forEach(x=>x.classList.toggle('on',x===b));startReplay()};
+$('#replay').onclick=startReplay;
+$$('.copy').forEach(b=>b.onclick=()=>{const t=b.parentElement.innerText.replace(/^copy\n?/,'');navigator.clipboard?.writeText(t);b.textContent='copied ✓';setTimeout(()=>b.textContent='copy',1500)});
+
+fetch('data.json',{cache:'no-store'}).then(r=>r.json()).then(d=>{D=d;render();show()}).catch(()=>{show();$('#caseCards').innerHTML='<p class="sub">No Kane data yet. Run the workflow.</p>'});
+</script>
 </body>
 </html>
