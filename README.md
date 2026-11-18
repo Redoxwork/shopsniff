@@ -40,6 +40,7 @@ Reports are saved in `reports/<date>_<name>/` (`index.html`, `report.json`, `fix
 - `checks.mjs`: the five checks. Each one is a Kane objective plus a `judge()` function.
 - `report.mjs`: HTML report, report gallery, and `fixes.md`.
 - `demo-shop/`: DealDrop, a fictional store. Shady by default, honest with `?fixed`.
+- `BUILD-LOG.md`: how the agent and Kane fixed ShopSniff together, run by run.
 - `.github/workflows/shopsniff.yml`: GitHub Actions installs Kane, runs the self-test, saves the reports and publishes the site (`site/`, `build-site.mjs`) on GitHub Pages.
 
 ShopSniff never enters payment details or places orders. DealDrop is fictional.
