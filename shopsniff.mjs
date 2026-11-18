@@ -66,6 +66,22 @@ function runKane(check, url, logDir) {
   });
 }
 
+// Split Kane's click/type actions into the join part and the cancel part.
+// Kane may restart the flow, so use the LAST join click before the cancel flow begins.
+function countCancelFlow(actions) {
+  const clean = a => a.replace(/^(click|type|fill|select|input|press|check):\s*/i, '').slice(0, 90);
+  const isCancelStart = a => /cancel|manage|account|settings|stop|unsubscribe/i.test(a) && !/join/i.test(a);
+  let firstCancel = actions.findIndex((a, i) => isCancelStart(a) && actions.slice(0, i).some(x => /join/i.test(x)));
+  if (firstCancel < 0) return {};
+  let joinEnd = -1;
+  for (let i = firstCancel - 1; i >= 0; i--) if (/join/i.test(actions[i])) { joinEnd = i; break; }
+  // the join flow starts after any earlier (abandoned) attempt: walk back to the first click of this attempt
+  let joinStart = joinEnd;
+  while (joinStart > 0 && !/join/i.test(actions[joinStart - 1]) === false) joinStart--;
+  while (joinStart > 0 && /club|member|subscri|plan|pricing/i.test(actions[joinStart - 1]) && !/join/i.test(actions[joinStart - 1])) joinStart--;
+  return { join_clicks: actions.slice(joinStart, joinEnd + 1).map(clean), cancel_clicks: actions.slice(firstCancel).map(clean) };
+}
+
 // copy Kane's evidence screenshots into the report folder
 function copyEvidence(runEnd, destDir, prefix) {
   const dir = runEnd?.session_dir && path.join(runEnd.session_dir, 'evidence');
@@ -119,10 +135,7 @@ export async function sniff(url, { name, only, parallel = 2 } = {}) {
     let judged;
     if (empty(run)) judged = { verdict: 'unknown', finding: `Kane couldn't finish this check: ${run.runEnd?.one_liner || run.errors[0] || 'exit code ' + run.exitCode}` };
     else {
-      if (check.id === 'cancel') {
-        const joinIdx = run.actions.findIndex(a => /join/i.test(a));
-        if (joinIdx >= 0) Object.defineProperty(state, '__actions', { value: { join: joinIdx + 1, cancel: run.actions.length - joinIdx - 1 }, enumerable: false });
-      }
+      if (check.id === 'cancel') Object.assign(state, countCancelFlow(run.actions));
       judged = check.judge(state);
     }
     const evidence = copyEvidence(run.runEnd, path.join(dir, 'evidence'), check.id);
