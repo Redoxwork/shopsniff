@@ -36,6 +36,17 @@ img{display:block;max-width:100%}
 .wrap{max-width:1240px;margin:0 auto;padding:0 28px}
 @media (max-width:700px){.wrap{padding:0 18px}}
 
+/* ---------- icons ---------- */
+.ic{width:1.25em;height:1.25em;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.25em;flex:none}
+.ic .ac{stroke:var(--org)}
+.chip .ic{width:17px;height:17px}.chip.f .ic .ac{stroke:var(--mintd)}
+.ba .c small{display:flex;align-items:center;gap:6px}.ba .c small .ic{width:16px;height:16px;color:var(--ink)}
+.ba .bal .ic .ac{stroke:var(--mintd)}
+.strow span{display:flex;align-items:center;gap:8px;min-width:0}.strow .ic{width:18px;height:18px}
+.kat .strow .ic{color:#fff}.kat .strow .ic .ac{stroke:var(--mint)}
+.mic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:#ffffff12;color:#fff}.mic .ic{width:19px;height:19px}.mic .ic .ac{stroke:var(--mint)}
+.tile .cap .nm{display:flex;align-items:center;gap:7px;min-width:0}.tile .cap .ic{width:18px;height:18px}
+
 /* ---------- header ---------- */
 header{position:sticky;top:0;z-index:50;background:#ecedeae6;backdrop-filter:blur(14px) saturate(1.3);-webkit-backdrop-filter:blur(14px) saturate(1.3);border-bottom:1px solid transparent;transition:border-color .3s}
 header.sc{border-bottom-color:var(--line)}
@@ -205,7 +216,7 @@ section.blk{padding:90px 0}
 .sin input{flex:1 1 220px;min-width:0;padding:16px 18px;border-radius:99px;border:2px solid #ffffff26;background:#ffffff0d;color:#fff;font:500 15px var(--mono);outline:none;transition:border-color .2s}
 .sin input::placeholder{color:#8d93ad}.sin input:focus{border-color:var(--mint)}
 .miss{display:grid;gap:8px;margin-top:16px}
-.mi{display:grid;grid-template-columns:30px 1fr;gap:10px;padding:12px 14px;border-radius:14px;background:#ffffff0b;border:1px solid #ffffff14;font-size:13.5px;line-height:1.45;opacity:0;transform:translateY(8px);animation:mi .5s cubic-bezier(.2,.8,.2,1) forwards}
+.mi{display:grid;grid-template-columns:34px 1fr;align-items:start;gap:10px;padding:12px 14px;border-radius:14px;background:#ffffff0b;border:1px solid #ffffff14;font-size:13.5px;line-height:1.45;opacity:0;transform:translateY(8px);animation:mi .5s cubic-bezier(.2,.8,.2,1) forwards}
 .mi>div{min-width:0}.mi b{font-size:17px}.mi code{display:block;font-family:var(--mono);font-size:11px;color:var(--mint);margin-top:3px;word-break:break-all}
 @keyframes mi{to{opacity:1;transform:none}}
 pre.code{margin:0;padding:18px 20px;border-radius:18px;background:var(--ink);color:#d8dcef;font-family:var(--mono);font-size:12.5px;line-height:1.75;overflow:auto;position:relative}
@@ -358,7 +369,7 @@ footer .end{grid-column:1/-1;border-top:1px solid #ffffff1a;padding-top:18px;fon
         <div class="kicker"><i></i><span id="kick">Verified by Kane CLI</span></div>
         <h1>Is this shop <em>lying</em> to you?</h1>
         <p class="lead">ShopSniff sends an AI agent into an online store. It shops like a real person in a real browser, catches the tricks, and keeps the receipts.</p>
-        <div class="btns"><a class="btn a" href="#replay">▶&nbsp; Watch Kane sniff</a><a class="btn b" href="#cases">Open the case files</a></div>
+        <div class="btns"><a class="btn a" href="#replay"><svg class="ic" viewBox="0 0 24 24" style="fill:var(--mint);stroke:none;width:16px;height:16px"><path d="M7 4.5v15l12-7.5z"/></svg>Watch Kane sniff</a><a class="btn b" href="#cases">Open the case files</a></div>
         <div class="meta" id="meta"></div>
       </div>
       <div class="scene"><div class="plane" id="plane"></div></div>
@@ -473,7 +484,7 @@ const PAGES=[['home','Home'],['replay','Live replay'],['cases','Case files'],['h
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const pick=(st,k)=>st?.[k]??'';
+const pick=(st,k)=>{const v=st?.[k]??'';if(/^timer_/.test(k))return String(v).replace(/^.*?ends in\s*/i,'');if(/^stock_\d/.test(k)&&String(v).includes(':')){const f=String(v).split('|')[0];return f.slice(f.lastIndexOf(':')+1).trim()}return v};
 const num=v=>(String(v).match(/\d+/)||['?'])[0];
 const money=v=>parseFloat(String(v).replace(/[^\d.]/g,''));
 const ago=iso=>{if(!iso)return '—';const m=Math.round((Date.now()-new Date(iso))/60000);return m<1?'just now':m<60?m+' min ago':m<1440?Math.round(m/60)+' h ago':Math.round(m/1440)+' d ago'};
@@ -500,7 +511,15 @@ let io; function observe(){io?.disconnect();io=new IntersectionObserver(es=>es.f
 function wireCopy(root=document){root.querySelectorAll('.copy').forEach(b=>b.onclick=async()=>{const t=b.parentElement.innerText.replace(/^copy\s*/,'').replace(/^copied ✓\s*/,'');try{await navigator.clipboard.writeText(t);b.textContent='copied ✓'}catch{b.textContent='select + copy'}setTimeout(()=>b.textContent='copy',1600)})}
 
 /* ---------- shared bits ---------- */
-const ICON={timer:'⏱',stock:'🔥',addon:'🛒',fees:'💸',cancel:'🔒'};
+const SVG={
+ timer:'<circle cx="12" cy="13.5" r="7.5"/><path d="M12 13.5V9.5"/><path d="M12 13.5l3 2" class="ac"/><path d="M9.5 2.5h5M12 2.5V6M18.5 6.5l1.5-1.5"/><path d="M5.6 9.8A7.5 7.5 0 0 1 12 6" class="ac"/>',
+ stock:'<path d="M3.5 8.5L12 4l8.5 4.5v8L12 21l-8.5-4.5z"/><path d="M3.5 8.5L12 13l8.5-4.5M12 13v8"/><path d="M15.5 2.5c1.2 1.3 1.6 2.4.6 3.6-.6.7-1.7.6-2-.3" class="ac"/>',
+ addon:'<path d="M2.5 4h2.6l2.4 10.5h10.2L20 7.5H6.2"/><circle cx="9.5" cy="19" r="1.6"/><circle cx="16.5" cy="19" r="1.6"/><path d="M14.5 2.5v5M12 5h5" class="ac"/>',
+ fees:'<path d="M5.5 2.5h13v19l-2.2-1.6-2.1 1.6-2.2-1.6-2.1 1.6-2.2-1.6-2.2 1.6z"/><path d="M9 7h6M9 10.5h6"/><path d="M12 13.5v5M9.5 16h5" class="ac"/>',
+ cancel:'<rect x="4.5" y="10.5" width="15" height="10.5" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><path d="M10 14l4 4M14 14l-4 4" class="ac"/>',
+};
+const ic=(id,cls='')=>`<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hidden="true">${SVG[id]||''}</svg>`;
+const ICON=Object.fromEntries(Object.keys(SVG).map(k=>[k,ic(k)]));
 const SHORT={timer:'Fake countdown',stock:'Fake stock',addon:'Sneaky add-on',fees:'Hidden fee',cancel:'Cancel maze'};
 const FILT=[['all','All'],['timer','Timers'],['stock','Stock'],['addon','Cart'],['fees','Fees'],['cancel','Cancel']];
 const res=(R,id)=>R?.results?.find(r=>r.id===id);
@@ -546,7 +565,7 @@ function tileObj(id,s,ok){
 function renderRoom(){
   const R=D?.[roomStore]; if(!R) return;
   $('#filters').innerHTML=FILT.map(([k,l])=>`<button data-f="${k}" class="${k===roomFilter?'on':''}">${l}</button>`).join('');
-  $('#tiles').innerHTML=R.results.map((r,i)=>{const ok=r.verdict==='pass',bad=r.verdict==='fail';return `<div class="tile ${roomFilter!=='all'&&roomFilter!==r.id?'hide':''}" style="animation-delay:${i*60}ms" data-id="${r.id}"><div class="stage">${tileObj(r.id,r.stored||{},!bad)}</div><div class="cap">${SHORT[r.id]||esc(r.title)}<span class="v ${bad?'t':ok?'f':'n'}">${bad?'TRICK':ok?'FAIR':esc(r.verdict.toUpperCase())}</span></div>${r.test_url?`<div class="watch"><a href="${esc(r.test_url)}" target="_blank" rel="noopener">Watch Kane do it ↗</a></div>`:''}</div>`}).join('');
+  $('#tiles').innerHTML=R.results.map((r,i)=>{const ok=r.verdict==='pass',bad=r.verdict==='fail';return `<div class="tile ${roomFilter!=='all'&&roomFilter!==r.id?'hide':''}" style="animation-delay:${i*60}ms" data-id="${r.id}"><div class="stage">${tileObj(r.id,r.stored||{},!bad)}</div><div class="cap"><span class="nm">${ic(r.id)}${SHORT[r.id]||esc(r.title)}</span><span class="v ${bad?'t':ok?'f':'n'}">${bad?'TRICK':ok?'FAIR':esc(r.verdict.toUpperCase())}</span></div>${r.test_url?`<div class="watch"><a href="${esc(r.test_url)}" target="_blank" rel="noopener">Watch Kane do it ↗</a></div>`:''}</div>`}).join('');
 }
 $('#filters').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;roomFilter=b.dataset.f;renderRoom()});
 $('#roomSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;roomStore=b.dataset.s;$$('#roomSeg button').forEach(x=>x.className=x===b?'on '+(roomStore==='shady'?'o':'g'):'');renderRoom()});
@@ -556,11 +575,11 @@ function renderBA(){
   const one=(R,h)=>{const T=st(R,'timer'),S=st(R,'stock'),A=st(R,'addon'),F=st(R,'fees'),C=st(R,'cancel');const v=id=>{const x=res(R,id)?.verdict;return x==='fail'?'<span class="v t">TRICK</span>':x==='pass'?'<span class="v f">FAIR</span>':''};
     const items=String(pick(A,'cart_items')).split('|').map(x=>x.trim()).filter(Boolean);const fee=pick(F,'extra_fees');
     return `<div class="hd">DealDrop<span>${h?'HONEST':'SHADY'} · ${R?.score??'—'}/100</span></div><div class="grid5">
-    <div class="c"><small>⏱ COUNTDOWN</small><b>${esc(pick(T,'timer_first'))}</b><p>after a fresh load: ${esc(pick(T,'timer_after_reload'))}</p>${v('timer')}</div>
-    <div class="c"><small>🔥 STOCK</small><b>${['stock_1','stock_2','stock_3'].map(k=>num(pick(S,k))).join(' → ')}</b><p>${esc(pick(S,'stock_1'))}</p>${v('stock')}</div>
-    <div class="c"><small>🛒 CART (ADDED 1)</small><b>${items.length} item${items.length===1?'':'s'}</b><p>${esc(items.slice(1).join(', ')||'only what you added')}</p>${v('addon')}</div>
-    <div class="c"><small>💸 CHECKOUT</small><b>${esc(pick(F,'listed_price'))} → ${esc(pick(F,'final_total'))}</b><p>${hasFee(fee)?esc(fee)+' at the last step':'no extra fees'}</p>${v('fees')}</div>
-    <div class="c wide"><small>🔒 MEMBERSHIP</small><b>${(C.join_clicks||[]).length} to join · ${(C.cancel_clicks||[]).length} to cancel</b><p>clicks counted from Kane's own log</p>${v('cancel')}</div></div>`};
+    <div class="c"><small>${ic('timer')}COUNTDOWN</small><b>${esc(pick(T,'timer_first'))}</b><p>after a fresh load: ${esc(pick(T,'timer_after_reload'))}</p>${v('timer')}</div>
+    <div class="c"><small>${ic('stock')}STOCK</small><b>${['stock_1','stock_2','stock_3'].map(k=>num(pick(S,k))).join(' → ')}</b><p>${esc(pick(S,'stock_1'))}</p>${v('stock')}</div>
+    <div class="c"><small>${ic('addon')}CART (ADDED 1)</small><b>${items.length} item${items.length===1?'':'s'}</b><p>${esc(items.slice(1).join(', ')||'only what you added')}</p>${v('addon')}</div>
+    <div class="c"><small>${ic('fees')}CHECKOUT</small><b>${esc(pick(F,'listed_price'))} → ${esc(pick(F,'final_total'))}</b><p>${hasFee(fee)?esc(fee)+' at the last step':'no extra fees'}</p>${v('fees')}</div>
+    <div class="c wide"><small>${ic('cancel')}MEMBERSHIP</small><b>${(C.join_clicks||[]).length} to join · ${(C.cancel_clicks||[]).length} to cancel</b><p>clicks counted from Kane's own log</p>${v('cancel')}</div></div>`};
   const ba=$('#ba'); ba.innerHTML=`${one(D.shady,0)}<div class="bal">${one(D.honest,1)}</div><span class="lbl l">← SHADY</span><span class="lbl r">HONEST →</span><div class="hand"></div>`;
   let drag=false; const setX=cx=>{const r=ba.getBoundingClientRect();ba.style.setProperty('--x',Math.min(97,Math.max(3,(cx-r.left)/r.width*100))+'%')};
   ba.onpointerdown=e=>{drag=true;setX(e.clientX);try{ba.setPointerCapture(e.pointerId)}catch{}};
@@ -569,13 +588,13 @@ function renderBA(){
 }
 
 /* ---------- sniff box ---------- */
-const MISSIONS=[['⏱','Read the sale countdown, wait 10 seconds, load the page fresh, read it again.'],['🔥','Read "Only N left" on three fresh page loads.'],['🛒','Add the first product with no extras ticked, then list everything in the cart.'],['💸','Note the listed price, go to the final order review (never pay), read the total and fees.'],['🔒','Join the membership, then cancel it. ShopSniff counts every click Kane makes.']];
+const MISSIONS=[['timer','Read the sale countdown, wait 10 seconds, load the page fresh, read it again.'],['stock','Read "Only N left" on three fresh page loads, always on the same product.'],['addon','Add the first product with no extras ticked, then list everything in the cart.'],['fees','Note the listed price, go to the final order review (never pay), read the total and fees.'],['cancel','Join the membership, then cancel it. ShopSniff counts every click Kane makes.']];
 function sniffBox(){
   let u=$('#sbUrl').value.trim(); if(!u){$('#sbUrl').focus();$('#sbUrl').placeholder='paste a shop link first';return}
   if(!/^https?:\/\//i.test(u)) u='https://'+u;
   let ok=true; try{const x=new URL(u); ok=/\./.test(x.hostname)}catch{ok=false}
   if(!ok){$('#sbOut').innerHTML='<p class="hint">That doesn\'t look like a shop link. Try something like https://shop.example</p>';return}
-  $('#sbOut').innerHTML=`<div class="miss">${MISSIONS.map(([i,t],n)=>`<div class="mi" style="animation-delay:${n*110}ms"><b>${i}</b><div>${t}<code>kane-cli run "Go to ${esc(u)} …" --agent --headless</code></div></div>`).join('')}</div>
+  $('#sbOut').innerHTML=`<div class="miss">${MISSIONS.map(([i,t],n)=>`<div class="mi" style="animation-delay:${n*110}ms"><span class="mic">${ic(i)}</span><div>${t}<code>kane-cli run "Go to ${esc(u)} …" --agent --headless</code></div></div>`).join('')}</div>
   <pre class="code"><button class="copy">copy</button>node shopsniff.mjs "${esc(u)}"</pre>
   <div class="btns" style="margin-top:14px"><a class="btn m" href="${esc(D?.repo||'https://github.com/Redoxwork/shopsniff')}/actions/workflows/shopsniff.yml" target="_blank" rel="noopener">Run in GitHub Actions ↗</a><a class="btn b" style="border-color:#fff;color:#fff" href="#install">Setup steps</a></div>
   <p class="hint">In Actions, tap "Run workflow" and paste the link into the URL box. Kane sniffs it, and the report appears under Case files. ShopSniff never pays or places orders.</p>`;
@@ -591,6 +610,7 @@ const LOOP=[
  {run:'Kane run 4',commit:'ad4d28e',c:'#e0a100',h:'The shady stock check passed. That was a false negative.',kane:'The step log showed Kane read the page once and stored the same value three times. It never reloaded.',agent:'Missions now require fresh page loads, and ShopSniff counts <code>navigate</code> steps in Kane\'s log. No reload means no verdict.'},
  {run:'Kane runs 5 + 6',commit:'green ✓',c:'var(--mintd)',h:'Self-test 5/5, twice in a row. Shady 0/100, honest 100/100.',kane:'All 10 missions completed with evidence, each linked to its TestMu Test Manager run.',agent:'Shipped, and left Kane running on every push.'},
  {run:'Kane run 7',commit:'e22354f',c:'var(--org)',h:'A false alarm on the honest store',kane:'The honest stock read <q>12 in stock → 8 in stock → 30 in stock</q>. Those are three different products: after each reload Kane picked a different card.',agent:'The mission now stores the product name with every reading and must find the same card each time. If the names don\'t match, ShopSniff calls it inconclusive instead of a trick.'},
+ {run:'Kane run 8',commit:'afe7d4a',c:'#e0a100',h:'The new guard worked, but Kane still wandered',kane:'It read <q>Earbuds → Smartwatch → Desk Lamp</q> across the three loads. ShopSniff said inconclusive instead of giving a wrong verdict.',agent:'Stopped asking Kane to stick to one card. Kane now reads the whole product list on every load, and ShopSniff compares each product with itself.'},
 ];
 function render(){
   const sh=D.shady, ho=D.honest, S=D.selftest;

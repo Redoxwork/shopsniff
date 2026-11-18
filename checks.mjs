@@ -68,25 +68,42 @@ export const CHECKS = [
     title: 'Fake "only N left" stock',
     question: 'Does the scarcity message change on every reload?',
     timeout: 180, maxSteps: 25,
-    objective: url => `Step 1: Go to ${url}. Store the name of the first product in the product list as product_name, and store the exact stock or scarcity message shown on that product's card (for example "Only 3 left" or "12 in stock") as stock_1. ` +
-      `Step 2: Navigate to ${url} again so the page fully loads fresh. Find the product card whose name is exactly {{product_name}}, store that card's product name as product_name_2 and its stock message as stock_2. ` +
-      `Step 3: Navigate to ${url} once more, find the card named {{product_name}} again, and store its product name as product_name_3 and its stock message as stock_3. ` +
-      `Always read the same product, never a different one. Read each value from the page after its own fresh load; do not copy an earlier value. Do not add anything to the cart. ` +
-      `If there is no stock message, store "none" for all three. ${NO_PAY}`,
+    objective: url => `Step 1: Go to ${url}. For every product card on the page, read its name and its stock or scarcity message (for example "Only 3 left" or "12 in stock"). ` +
+      `Store them all as one text in the form "name: message | name: message" as stock_1. ` +
+      `Step 2: Navigate to ${url} again so the page fully loads fresh, read every product card again the same way, and store the list as stock_2. ` +
+      `Step 3: Navigate to ${url} once more and store the list as stock_3. ` +
+      `Read each list from the page after its own fresh load; do not copy an earlier value. Do not add anything to the cart. ` +
+      `If there are no stock messages, store "none" for all three. ${NO_PAY}`,
     judge(st) {
       const raw = ['stock_1', 'stock_2', 'stock_3'].map(k => pick(st, k));
       if (raw.every(isNone)) return { verdict: 'na', finding: 'No stock or scarcity message found.' };
       if (st.__loads !== undefined && st.__loads < 3) return { verdict: 'unknown', finding: `Kane only loaded the page ${st.__loads} time(s), so the stock couldn't be compared across reloads.` };
-      // all three readings must come from the same product, or the comparison means nothing
-      const names = ['product_name', 'product_name_2', 'product_name_3'].map(k => String(pick(st, k) ?? '').trim().toLowerCase()).filter(n => n && !isNone(n));
-      if (names.length >= 2 && new Set(names).size > 1) return { verdict: 'unknown', finding: `Kane read the stock of different products (${[...new Set(names)].join(', ')}), so the readings can't be compared.` };
+      // each load is "name: message | name: message" -> compare every product with itself across loads
+      const loads = raw.map(v => {
+        const m = new Map();
+        String(v ?? '').split('|').forEach(part => {
+          const i = part.lastIndexOf(':'); if (i < 0) return;
+          const name = part.slice(0, i).trim().toLowerCase(), n = firstNumber(part.slice(i + 1));
+          if (name && n !== null) m.set(name, n);
+        });
+        return m;
+      });
+      const names = [...new Set(loads.flatMap(m => [...m.keys()]))];
+      const series = names.map(n => ({ n, vals: loads.map(m => m.get(n)).filter(v => v !== undefined) })).filter(x => x.vals.length >= 2);
+      if (series.length) {
+        const moved = series.filter(x => new Set(x.vals).size > 1);
+        const pretty = x => `${x.n.replace(/\b\w/g, c => c.toUpperCase())} ${x.vals.join(' → ')}`;
+        if (moved.length) return {
+          verdict: 'fail',
+          finding: `Nobody bought anything, but the stock changed between reloads for ${moved.length} of ${series.length} products (${moved.slice(0, 2).map(pretty).join('; ')}). The scarcity is made up.`,
+          fix: 'Show the real inventory number from your database, or drop the scarcity message.',
+        };
+        return { verdict: 'pass', finding: `Stock stayed the same across ${raw.length} fresh loads for all ${series.length} products (${pretty(series[0])}).` };
+      }
+      // fallback: single messages without product names
       const nums = raw.map(firstNumber).filter(n => n !== null);
       if (nums.length < 2) return { verdict: 'unknown', finding: `Stock text read: ${raw.filter(Boolean).join(' / ')}` };
-      if (new Set(nums).size > 1) return {
-        verdict: 'fail',
-        finding: `Nobody bought anything, but the stock count changed between reloads: ${nums.join(' → ')}. The scarcity is made up.`,
-        fix: 'Show the real inventory number from your database, or drop the scarcity message.',
-      };
+      if (new Set(nums).size > 1) return { verdict: 'fail', finding: `Nobody bought anything, but the stock count changed between reloads: ${nums.join(' → ')}. The scarcity is made up.`, fix: 'Show the real inventory number from your database, or drop the scarcity message.' };
       return { verdict: 'pass', finding: `Stock message stayed the same across 3 loads (${raw[0]}).` };
     },
   },
