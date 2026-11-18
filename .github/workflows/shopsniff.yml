@@ -46,13 +46,13 @@ jobs:
         id: selftest
         continue-on-error: true
         env: { KANE_CLI_USER_AGENT: github-actions }
-        run: node shopsniff.mjs selftest http://localhost:8080/ --parallel 3
+        run: node shopsniff.mjs selftest http://localhost:8080/ --parallel 2
 
       - name: Sniff another shop
         if: ${{ github.event.inputs.url != '' }}
         continue-on-error: true
         env: { KANE_CLI_USER_AGENT: github-actions }
-        run: node shopsniff.mjs "${{ github.event.inputs.url }}" --parallel 3
+        run: node shopsniff.mjs "${{ github.event.inputs.url }}" --parallel 2
 
       - name: Summary
         if: always()

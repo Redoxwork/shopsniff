@@ -136,15 +136,20 @@ export const CHECKS = [
     question: 'Is cancelling much harder than joining?',
     timeout: 360, maxSteps: 60,
     objective: url => `Go to ${url}. Find the store's membership or subscription and join it. ` +
-      `Count every click, page and form you needed until you were a member, and store that number as join_steps. ` +
-      `Then cancel the membership. Count every click, page and form needed until the site confirms it is cancelled, ` +
-      `and store that number as cancel_steps. If a form is required, fill it with simple test text. ` +
-      `If any button guilt-trips you for leaving (for example "No, I hate saving money"), store its exact text as guilt_text, otherwise store "none". ` +
-      `If there is no membership or subscription, store "none" as join_steps and cancel_steps. ${NO_PAY}`,
+      `Store the buttons and links you clicked to join, in order and separated by " > ", as join_path. ` +
+      `Then go to the account page and cancel the membership. If a form is required, fill it with simple test text. ` +
+      `Keep going until the site confirms the membership is cancelled. ` +
+      `Store every button and link you clicked and every field you filled to cancel, in order and separated by " > ", as cancel_path. ` +
+      `If any button guilt-trips you for leaving (for example "No, I hate saving money"), store its exact text as guilt_text, otherwise store "none" as guilt_text. ` +
+      `If there is no membership or subscription, store "none" as join_path and cancel_path. ${NO_PAY}`,
     judge(st) {
-      const j = firstNumber(pick(st, 'join_steps')), c = firstNumber(pick(st, 'cancel_steps'));
+      const pathLen = v => isNone(v) ? null : String(v).split(/\s*>\s*|\s*→\s*/).filter(x => x.trim()).length;
+      let j = pathLen(pick(st, 'join_path')) ?? firstNumber(pick(st, 'join_steps'));
+      let c = pathLen(pick(st, 'cancel_path')) ?? firstNumber(pick(st, 'cancel_steps'));
+      // fallback: count Kane's own click/type actions (passed in by the runner)
+      if ((j === null || c === null) && st.__actions) { j ??= st.__actions.join; c ??= st.__actions.cancel; }
       const guilt = pick(st, 'guilt_text');
-      if (isNone(pick(st, 'join_steps')) && isNone(pick(st, 'cancel_steps'))) return { verdict: 'na', finding: 'No membership or subscription found.' };
+      if (isNone(pick(st, 'join_path')) && isNone(pick(st, 'cancel_path')) && pick(st, 'join_path') !== undefined) return { verdict: 'na', finding: 'No membership or subscription found.' };
       if (j === null || c === null) return { verdict: 'unknown', finding: 'Could not count the join and cancel steps.' };
       const shame = !isNone(guilt) ? ` One button guilt-tripped: “${guilt}”.` : '';
       if (c > Math.max(3, j * 2) || !isNone(guilt)) return {

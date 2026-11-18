@@ -40,7 +40,7 @@ function runKane(check, url, logDir) {
     const child = spawn(KANE, args, { env: { ...process.env, KANE_CLI_USER_AGENT: process.env.KANE_CLI_USER_AGENT || 'claude-code' } });
     const out = fs.createWriteStream(path.join(logDir, `${check.id}.ndjson`));
     const err = fs.createWriteStream(path.join(logDir, `${check.id}.stderr.log`));
-    let buf = '', runEnd = null, steps = { done: 0, failed: 0 }, errors = [];
+    let buf = '', runEnd = null, steps = { done: 0, failed: 0 }, errors = [], actions = [];
     child.stdout.on('data', d => {
       out.write(d); buf += d;
       let i;
@@ -51,7 +51,7 @@ function runKane(check, url, logDir) {
         if (ev.type === 'run_end') runEnd = ev;
         else if (ev.type === 'error') errors.push(ev.message || JSON.stringify(ev));
         else if (!ev.type && ev.status) {
-          if (ev.status === 'done') steps.done++;
+          if (ev.status === 'done') { steps.done++; if (/^(click|type|fill|select|input|press|check)\b/i.test(ev.remark || '')) actions.push(String(ev.remark)); }
           if (ev.status === 'failed') steps.failed++;
           if (ev.status !== 'running' && ev.remark) console.log(`  [${check.id}] ${ev.status === 'failed' ? '✗' : '·'} ${String(ev.remark).slice(0, 110)}`);
         }
@@ -61,7 +61,7 @@ function runKane(check, url, logDir) {
     child.on('error', e => { errors.push(e.code === 'ENOENT' ? `Could not find "${KANE}". Install it: npm install -g @testmuai/kane-cli` : e.message); });
     child.on('close', code => {
       out.end(); err.end();
-      resolve({ objective, exitCode: code, runEnd, steps, errors, seconds: Math.round((Date.now() - started) / 1000) });
+      resolve({ objective, exitCode: code, runEnd, steps, actions, errors, seconds: Math.round((Date.now() - started) / 1000) });
     });
   });
 }
@@ -107,18 +107,31 @@ export async function sniff(url, { name, only, parallel = 2 } = {}) {
   console.log(`\n🐽 ShopSniff → ${url}\n   ${checks.length} checks, Kane CLI in a real browser (${parallel} at a time)\n`);
 
   const results = await pool(checks, parallel, async check => {
-    const run = await runKane(check, url, logDir);
-    const state = run.runEnd?.final_state || {};
+    let run = await runKane(check, url, logDir);
+    const empty = r => !r.runEnd || !Object.keys(r.runEnd.final_state || {}).some(k => k !== 'url');
+    if (empty(run)) {
+      console.log(`  [${check.id}] Kane run ended without evidence (${run.runEnd?.one_liner || 'exit ' + run.exitCode}). Retrying once…`);
+      fs.renameSync(path.join(logDir, `${check.id}.ndjson`), path.join(logDir, `${check.id}.attempt1.ndjson`));
+      run = await runKane(check, url, logDir);
+      run.retried = true;
+    }
+    const state = { ...(run.runEnd?.final_state || {}) };
     let judged;
-    if (!run.runEnd) judged = { verdict: 'unknown', finding: run.errors[0] || `Kane exited with code ${run.exitCode} before finishing.` };
-    else judged = check.judge(state);
+    if (empty(run)) judged = { verdict: 'unknown', finding: `Kane couldn't finish this check: ${run.runEnd?.one_liner || run.errors[0] || 'exit code ' + run.exitCode}` };
+    else {
+      if (check.id === 'cancel') {
+        const joinIdx = run.actions.findIndex(a => /join/i.test(a));
+        if (joinIdx >= 0) Object.defineProperty(state, '__actions', { value: { join: joinIdx + 1, cancel: run.actions.length - joinIdx - 1 }, enumerable: false });
+      }
+      judged = check.judge(state);
+    }
     const evidence = copyEvidence(run.runEnd, path.join(dir, 'evidence'), check.id);
     const r = {
       id: check.id, title: check.title, question: check.question, ...judged,
       stored: state, kane: {
         status: run.runEnd?.status, summary: run.runEnd?.summary || run.runEnd?.one_liner, reason: run.runEnd?.reason,
         test_url: run.runEnd?.test_url, credits: run.runEnd?.credits_consumed ?? run.runEnd?.credits,
-        duration: run.runEnd?.duration ?? run.seconds, exit_code: run.exitCode, steps: run.steps,
+        duration: run.runEnd?.duration ?? run.seconds, exit_code: run.exitCode, steps: run.steps, retried: !!run.retried,
       },
       objective: run.objective, evidence,
     };
