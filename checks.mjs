@@ -45,14 +45,15 @@ export const CHECKS = [
     title: 'Fake countdown timer',
     question: 'Does the "sale ends in…" timer restart when you reload?',
     timeout: 180, maxSteps: 25,
-    objective: url => `Go to ${url}. Look for a sale countdown timer on the page (for example "Sale ends in 14:59"). ` +
-      `Store the exact time it shows as timer_first. Wait 10 seconds, then reload the page. ` +
-      `Store the exact time the same countdown shows right after the reload as timer_after_reload. ` +
+    objective: url => `Step 1: Go to ${url} and store the exact time shown by the sale countdown timer (for example "Sale ends in 14:59") as timer_first. ` +
+      `Step 2: Wait 10 seconds. Step 3: Navigate to ${url} again so the page fully loads fresh, and immediately store the time the countdown now shows as timer_after_reload. ` +
+      `Read the second value from the freshly loaded page; do not copy the first value. ` +
       `If the page has no countdown timer, store "none" as timer_first and "none" as timer_after_reload. ${NO_PAY}`,
     judge(st) {
       const a = toSeconds(pick(st, 'timer_first')), b = toSeconds(pick(st, 'timer_after_reload'));
       if (a === null && b === null) return { verdict: 'na', finding: 'No countdown timer found on the page.' };
       if (a === null || b === null) return { verdict: 'unknown', finding: 'Could only read the timer once.' };
+      if (st.__loads !== undefined && st.__loads < 2) return { verdict: 'unknown', finding: 'Kane did not reload the page, so the timer could not be compared.' };
       // at least ~10s passed, so an honest timer must have gone DOWN
       if (b >= a - 3) return {
         verdict: 'fail',
@@ -67,13 +68,15 @@ export const CHECKS = [
     title: 'Fake "only N left" stock',
     question: 'Does the scarcity message change on every reload?',
     timeout: 180, maxSteps: 25,
-    objective: url => `Go to ${url}. Find a stock or scarcity message on the first product (for example "Only 3 left" or "12 in stock") ` +
-      `and store its exact text as stock_1. Reload the page and store the same product's stock message as stock_2. ` +
-      `Reload once more and store it as stock_3. Do not add anything to the cart. ` +
+    objective: url => `Step 1: Go to ${url} and store the exact stock or scarcity message shown on the first product (for example "Only 3 left" or "12 in stock") as stock_1. ` +
+      `Step 2: Navigate to ${url} again so the page fully loads fresh, then store the first product's stock message as stock_2. ` +
+      `Step 3: Navigate to ${url} once more, then store the first product's stock message as stock_3. ` +
+      `Read each value from the page after its own fresh load; do not copy an earlier value. Do not add anything to the cart. ` +
       `If there is no stock message, store "none" for all three. ${NO_PAY}`,
     judge(st) {
       const raw = ['stock_1', 'stock_2', 'stock_3'].map(k => pick(st, k));
       if (raw.every(isNone)) return { verdict: 'na', finding: 'No stock or scarcity message found.' };
+      if (st.__loads !== undefined && st.__loads < 3) return { verdict: 'unknown', finding: `Kane only loaded the page ${st.__loads} time(s), so the stock couldn't be compared across reloads.` };
       const nums = raw.map(firstNumber).filter(n => n !== null);
       if (nums.length < 2) return { verdict: 'unknown', finding: `Stock text read: ${raw.filter(Boolean).join(' / ')}` };
       if (new Set(nums).size > 1) return {
@@ -148,7 +151,7 @@ export const CHECKS = [
       const j = st.join_clicks?.length ?? null, c = st.cancel_clicks?.length ?? null;
       if (!j || !c) return { verdict: 'unknown', finding: 'Could not see both the join and the cancel flow in Kane\'s actions.' };
       const shamingClick = (st.cancel_clicks || []).find(a => /hate|no thanks|don.?t want|rather pay|lose (my|all)/i.test(a));
-      const guilt = !isNone(pick(st, 'guilt_text')) && pick(st, 'guilt_text') !== undefined ? pick(st, 'guilt_text') : (shamingClick ? shamingClick.replace(/^.*?(clicking|click)\s*/i, '').replace(/^"|"$/g, '') : 'none');
+      const guilt = !isNone(pick(st, 'guilt_text')) && pick(st, 'guilt_text') !== undefined ? pick(st, 'guilt_text') : (shamingClick ? shamingClick.replace(/^.*?(clicking|click)\s*/i, '').replace(/^"|"$/g, '').replace(/\s+(to|in|on) (cancel|the|your) .*$/i, '') : 'none');
       const shame = !isNone(guilt) ? ` One button guilt-tripped: “${guilt}”.` : '';
       if (c > Math.max(3, j * 2) || !isNone(guilt)) return {
         verdict: 'fail',

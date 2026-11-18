@@ -40,7 +40,7 @@ function runKane(check, url, logDir) {
     const child = spawn(KANE, args, { env: { ...process.env, KANE_CLI_USER_AGENT: process.env.KANE_CLI_USER_AGENT || 'claude-code' } });
     const out = fs.createWriteStream(path.join(logDir, `${check.id}.ndjson`));
     const err = fs.createWriteStream(path.join(logDir, `${check.id}.stderr.log`));
-    let buf = '', runEnd = null, steps = { done: 0, failed: 0 }, errors = [], actions = [];
+    let buf = '', runEnd = null, steps = { done: 0, failed: 0 }, errors = [], actions = [], loads = 0;
     child.stdout.on('data', d => {
       out.write(d); buf += d;
       let i;
@@ -51,6 +51,7 @@ function runKane(check, url, logDir) {
         if (ev.type === 'run_end') runEnd = ev;
         else if (ev.type === 'error') errors.push(ev.message || JSON.stringify(ev));
         else if (!ev.type && ev.status) {
+          if (ev.status === 'done' && /^(navigate|reload|refresh|goto|open)\b/i.test(ev.remark || '')) loads++;
           if (ev.status === 'done') { steps.done++; if (/^(click|type|fill|select|input|press|check)\b/i.test(ev.remark || '')) actions.push(String(ev.remark)); }
           if (ev.status === 'failed') steps.failed++;
           if (ev.status !== 'running' && ev.remark) console.log(`  [${check.id}] ${ev.status === 'failed' ? '✗' : '·'} ${String(ev.remark).slice(0, 110)}`);
@@ -61,7 +62,7 @@ function runKane(check, url, logDir) {
     child.on('error', e => { errors.push(e.code === 'ENOENT' ? `Could not find "${KANE}". Install it: npm install -g @testmuai/kane-cli` : e.message); });
     child.on('close', code => {
       out.end(); err.end();
-      resolve({ objective, exitCode: code, runEnd, steps, actions, errors, seconds: Math.round((Date.now() - started) / 1000) });
+      resolve({ objective, exitCode: code, runEnd, steps, actions, loads, errors, seconds: Math.round((Date.now() - started) / 1000) });
     });
   });
 }
@@ -136,6 +137,7 @@ export async function sniff(url, { name, only, parallel = 2 } = {}) {
     if (empty(run)) judged = { verdict: 'unknown', finding: `Kane couldn't finish this check: ${run.runEnd?.one_liner || run.errors[0] || 'exit code ' + run.exitCode}` };
     else {
       if (check.id === 'cancel') Object.assign(state, countCancelFlow(run.actions));
+      Object.defineProperty(state, '__loads', { value: run.loads, enumerable: false });
       judged = check.judge(state);
     }
     const evidence = copyEvidence(run.runEnd, path.join(dir, 'evidence'), check.id);
