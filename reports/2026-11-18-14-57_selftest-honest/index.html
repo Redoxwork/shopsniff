@@ -1,0 +1,112 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ShopSniff · selftest-honest · 100/100</title><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet"><style>
+:root{--ink:#eef2f5;--mut:#8b96a1;--bg:#05070a;--card:#0c1014;--line:#ffffff17;--brand:#45f0a0}
+*{box-sizing:border-box}body{margin:0;font-family:'Space Grotesk',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background-image:radial-gradient(700px 400px at 90% -10%,#0f8f5a33,transparent);background:var(--bg);color:var(--ink);line-height:1.45}
+a{color:var(--brand)}main{max-width:900px;margin:0 auto;padding:28px 20px 60px}
+.top{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;margin-bottom:22px}.top small{font-weight:400;color:var(--mut);font-size:13px}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+.ring{--p:0;width:132px;height:132px;border-radius:50%;display:grid;place-items:center;flex:none;background:conic-gradient(var(--c) calc(var(--p)*1%),#ffffff14 0);box-shadow:0 0 40px -10px var(--c)}
+.ring div{width:104px;height:104px;border-radius:50%;background:var(--card);display:grid;place-items:center;text-align:center}
+.ring b{font-size:34px;display:block;line-height:1}.ring span{font-size:12px;color:var(--mut)}
+.hero h1{margin:0 0 4px;font-size:26px}.url{color:var(--mut);word-break:break-all;font-size:14px}
+.pill{display:inline-block;padding:3px 10px;border-radius:99px;color:#fff;font-size:12px;font-weight:700}
+.meta{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:13px;color:var(--mut)}
+h2{font-size:15px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin:30px 0 12px}
+.check{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:12px;border-left:5px solid var(--c)}
+.check h3{margin:0;font-size:17px;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.q{color:var(--mut);font-size:14px;margin:2px 0 10px}.finding{font-size:15px;margin:0 0 10px}
+.fix{background:#45f0a00d;border:1px solid #45f0a033;border-radius:10px;padding:10px 12px;font-size:14px;margin-bottom:10px}
+details{font-size:13px;color:var(--mut)}summary{cursor:pointer}
+table{border-collapse:collapse;margin:8px 0;font-size:13px}td{border:1px solid var(--line);padding:4px 8px;vertical-align:top}
+.shots{display:flex;gap:8px;overflow-x:auto;margin-top:8px}.shots img{height:150px;border-radius:8px;border:1px solid var(--line)}
+code{background:#ffffff10;padding:1px 5px;border-radius:5px;font-size:12px}
+footer{margin-top:30px;color:var(--mut);font-size:12px;text-align:center}
+.list a{display:flex;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px;text-decoration:none;color:var(--ink)}
+.dot{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;flex:none}</style></head><body><main><a href="../../index.html" style="font-size:13px;color:var(--mut)">← ShopSniff home</a>
+<div class="top"><span aria-hidden="true">🐽</span> ShopSniff <small>an AI agent checks if a shop is lying before you buy</small></div>
+<div class="hero">
+  <div class="ring" style="--p:100;--c:#2fd98a" data-testid="score"><div><b>100</b><span>honesty score</span></div></div>
+  <div><span class="pill" style="background:#2fd98a" data-testid="verdict">Plays fair · grade A</span>
+    <h1>selftest-honest</h1><div class="url">http://localhost:8080/?fixed</div>
+    <div class="meta"><span>0 tricks found</span><span>5 of 5 checks conclusive</span>
+    <span>Wed, 18 Nov 2026 15:04:13 GMT</span></div></div>
+</div>
+<h2>What Kane found</h2><section class="check" style="--c:#12a86b" data-testid="check-timer" data-verdict="pass">
+      <h3>Fake countdown timer <span class="pill" style="background:#12a86b">Fair</span></h3>
+      <p class="q">Does the &quot;sale ends in…&quot; timer restart when you reload?</p>
+      <p class="finding">Timer kept counting down (13d 09:01:30 → 13d 09:00:52). The deadline looks real.</p>
+      
+      
+      <details><summary>Evidence from Kane</summary>
+        <table><tr><td><code>url</code></td><td>http://localhost:8080/?fixed</td></tr><tr><td><code>timer_first</code></td><td>13d 09:01:30</td></tr><tr><td><code>timer_after_reload</code></td><td>13d 09:00:52</td></tr></table>
+        <p>Waited 10 seconds, then reloaded the page fresh as requested.
+Read the sale countdown before the wait as 13d 09:01:30.
+Read the countdown from the freshly loaded page as 13d 09:00:52, using the second value rather than the first.
+No payment details were entered and no order was placed.</p>
+        <p>Kane run: passed · 7 steps · 81.1s · 20.665622500000005 credits
+         · <a href="https://test-manager.lambdatest.com/projects/01M7QDFJY4GFK3BVYEAWYENMTY/test-cases/01M7QJKYPW03REWVQFMFTMN2DB/dashboard/share/US_MBQ7XL9DH2ILXPWNHYE88B9ORY98F5CZ6AOXM133EDHT2RJR87T71MLGXKD1X5HF?type=summary&amp;agentView=true&amp;fqdn=summary-page" target="_blank">Open in TestMu Test Manager</a></p>
+        <p>Objective given to Kane:<br><code>Step 1: Go to http://localhost:8080/?fixed and store the exact time shown by the sale countdown timer (for example &quot;Sale ends in 14:59&quot;) as timer_first. Step 2: Wait 10 seconds. Step 3: Navigate to http://localhost:8080/?fixed again so the page fully loads fresh, and immediately store the time the countdown now shows as timer_after_reload. Read the second value from the freshly loaded page; do not copy the first value. If the page has no countdown timer, store &quot;none&quot; as timer_first and &quot;none&quot; as timer_after_reload. Never enter payment details and never place a real order.</code></p>
+      </details></section><section class="check" style="--c:#12a86b" data-testid="check-stock" data-verdict="pass">
+      <h3>Fake &quot;only N left&quot; stock <span class="pill" style="background:#12a86b">Fair</span></h3>
+      <p class="q">Does the scarcity message change on every reload?</p>
+      <p class="finding">Stock message stayed the same across 3 loads (12 in stock).</p>
+      
+      
+      <details><summary>Evidence from Kane</summary>
+        <table><tr><td><code>url</code></td><td>http://localhost:8080/?fixed</td></tr><tr><td><code>stock_1</code></td><td>12 in stock</td></tr><tr><td><code>stock_2</code></td><td>12 in stock</td></tr><tr><td><code>stock_3</code></td><td>12 in stock</td></tr></table>
+        <p>Reloaded the page at the requested address twice so it loaded fresh each time.
+Read the first product’s stock message before and after the refreshes; it showed “12 in stock” on all three reads.
+No items were added to the cart, and no payment or order actions were taken.</p>
+        <p>Kane run: passed · 7 steps · 146.7s · 31.2883475 credits
+         · <a href="https://test-manager.lambdatest.com/projects/01M7QDFJY4GFK3BVYEAWYENMTY/test-cases/01M7QJKY29SQAN9HPAVYBBF98W/dashboard/share/US_YJWNIR0HOB1DUUJFXF6SG0JFT635MJGLTUG2MH9AALTFWB97G2TSFGODZN7WYR0N?type=summary&amp;agentView=true&amp;fqdn=summary-page" target="_blank">Open in TestMu Test Manager</a></p>
+        <p>Objective given to Kane:<br><code>Step 1: Go to http://localhost:8080/?fixed and store the exact stock or scarcity message shown on the first product (for example &quot;Only 3 left&quot; or &quot;12 in stock&quot;) as stock_1. Step 2: Navigate to http://localhost:8080/?fixed again so the page fully loads fresh, then store the first product&#39;s stock message as stock_2. Step 3: Navigate to http://localhost:8080/?fixed once more, then store the first product&#39;s stock message as stock_3. Read each value from the page after its own fresh load; do not copy an earlier value. Do not add anything to the cart. If there is no stock message, store &quot;none&quot; for all three. Never enter payment details and never place a real order.</code></p>
+      </details></section><section class="check" style="--c:#12a86b" data-testid="check-addon" data-verdict="pass">
+      <h3>Sneaky add-on in cart <span class="pill" style="background:#12a86b">Fair</span></h3>
+      <p class="q">Does something you didn’t choose end up in your cart?</p>
+      <p class="finding">The cart held exactly what was added (AirWave Pro Earbuds).</p>
+      
+      
+      <details><summary>Evidence from Kane</summary>
+        <table><tr><td><code>url</code></td><td>http://localhost:8080/?fixed#/cart</td></tr><tr><td><code>product_name</code></td><td>AirWave Pro Earbuds</td></tr><tr><td><code>cart_items</code></td><td>AirWave Pro Earbuds</td></tr><tr><td><code>cart_line_count</code></td><td>1</td></tr></table>
+        <p>Opened the first product, AirWave Pro Earbuds.
+Added it to the cart without selecting any extra options.
+Opened the cart and confirmed it contains one line item: AirWave Pro Earbuds.
+No payment details were entered and no order was placed.</p>
+        <p>Kane run: passed · 7 steps · 89.5s · 29.544002500000005 credits
+         · <a href="https://test-manager.lambdatest.com/projects/01M7QDFJY4GFK3BVYEAWYENMTY/test-cases/01M7QJPV6TMHHCCBZS958V8NV5/dashboard/share/US_2CQNQ9EW7Z9HR5VYKFBUYT7UP3C17PYAZC6PI7JYL15CZ3YDWNLHPHMFYK9RSLQ7?type=summary&amp;agentView=true&amp;fqdn=summary-page" target="_blank">Open in TestMu Test Manager</a></p>
+        <p>Objective given to Kane:<br><code>Go to http://localhost:8080/?fixed. Open the first product. Store its name as product_name. Click &quot;Add to cart&quot; without ticking or choosing any extra options. Then open the cart. Store the names of every line item in the cart, separated by &quot; | &quot;, as cart_items, and store how many different line items are in the cart as cart_line_count. Never enter payment details and never place a real order.</code></p>
+      </details></section><section class="check" style="--c:#12a86b" data-testid="check-fees" data-verdict="pass">
+      <h3>Hidden fees at checkout <span class="pill" style="background:#12a86b">Fair</span></h3>
+      <p class="q">Does the final total match the price you were shown?</p>
+      <p class="finding">The final total ($49.00) matched the listed price ($49.00).</p>
+      
+      
+      <details><summary>Evidence from Kane</summary>
+        <table><tr><td><code>url</code></td><td>http://localhost:8080/?fixed#/review</td></tr><tr><td><code>listed_price</code></td><td>$49.00</td></tr><tr><td><code>final_total</code></td><td>$49.00</td></tr><tr><td><code>extra_fees</code></td><td>none</td></tr></table>
+        <p>Opened the first product, AirWave Pro Earbuds, and noted its listed price of $49.00.
+Added only the earbuds to the cart; no additional items were present.
+Continued through checkout using simple test information and reached the final order review page.
+No payment details were entered and no order was placed.
+The review page showed a final total of $49.00 with no added fees.</p>
+        <p>Kane run: passed · 14 steps · 136.7s · 41.92048250000001 credits
+         · <a href="https://test-manager.lambdatest.com/projects/01M7QDFJY4GFK3BVYEAWYENMTY/test-cases/01M7QJRV479W26FJS5QMT8SWS9/dashboard/share/US_SM0RL2770M3P9K0GGYVETLK6NFUYTKF247Z7N5OWLJJCU19NZYAPSL42QZYYPG3O?type=summary&amp;agentView=true&amp;fqdn=summary-page" target="_blank">Open in TestMu Test Manager</a></p>
+        <p>Objective given to Kane:<br><code>Go to http://localhost:8080/?fixed. Open the first product and store its displayed price as listed_price. Add it to the cart without any extras. If the cart contains anything else you did not add, remove it. Go to checkout and continue until the final order review page, filling any required fields with simple test text. Do not enter payment details and do not place the order. Store the final order total shown on the review page as final_total, and store the names of any fees added on top of the product price as extra_fees (or &quot;none&quot;). Never enter payment details and never place a real order.</code></p>
+      </details></section><section class="check" style="--c:#12a86b" data-testid="check-cancel" data-verdict="pass">
+      <h3>Hard-to-cancel subscription <span class="pill" style="background:#12a86b">Fair</span></h3>
+      <p class="q">Is cancelling much harder than joining?</p>
+      <p class="finding">Joining took 2 steps, cancelling took 3. Fair.</p>
+      
+      
+      <details><summary>Evidence from Kane</summary>
+        <table><tr><td><code>url</code></td><td>http://localhost:8080/?fixed#/cancelled</td></tr><tr><td><code>cancel_confirmation</code></td><td>Your DealDrop Club membership is cancelled.</td></tr><tr><td><code>guilt_text</code></td><td>none</td></tr><tr><td><code>join_clicks</code></td><td>[&quot;Clicking DealDrop Club in the top navigation&quot;,&quot;Clicking Join Club — $12.99/mo&quot;]</td></tr><tr><td><code>cancel_clicks</code></td><td>[&quot;Clicking Manage in My account in the account area&quot;,&quot;Clicking Cancel membership button in My account membership section&quot;,&quot;Clicking Yes, cancel membership&quot;]</td></tr></table>
+        <p>You asked to cancel the membership from the account area and continue until cancellation was confirmed.
+The membership cancellation flow was completed.
+The site confirmed: “Your DealDrop Club membership is cancelled.”
+No guilt-tripping button was shown during the cancellation flow.</p>
+        <p>Kane run: passed · 13 steps · 175.8s · 55.740515 credits
+         · <a href="https://test-manager.lambdatest.com/projects/01M7QDFJY4GFK3BVYEAWYENMTY/test-cases/01M7QJT0R0P5D7R0BDFDWM9DXP/dashboard/share/US_M4P9CACA814QIEA3MSF0ZDXXZO3FPCIHLG3W783BJVGMWG3VQH2POQGCM0GG03FV?type=summary&amp;agentView=true&amp;fqdn=summary-page" target="_blank">Open in TestMu Test Manager</a></p>
+        <p>Objective given to Kane:<br><code>Go to http://localhost:8080/?fixed. Find the store&#39;s membership or subscription and join it. Store the text that confirms you are a member as join_confirmation. Then cancel the membership from the account area. If a form is required, fill it with simple test text. Keep going until the site confirms the membership is cancelled, and store that confirmation text as cancel_confirmation. If any button guilt-trips you for leaving (for example &quot;No, I hate saving money&quot;), store its exact text as guilt_text, otherwise store &quot;none&quot; as guilt_text. If there is no membership or subscription, store &quot;none&quot; as join_confirmation. Never enter payment details and never place a real order.</code></p>
+      </details></section>
+<p style="font-size:14px">Running this shop yourself? Hand <a href="fixes.md">fixes.md</a> to your coding agent, then run ShopSniff again.</p>
+<footer>Every check was carried out by Kane CLI (TestMu AI) in a real browser, acting like a shopper. ShopSniff never pays or places real orders.<br><a href="../index.html">All reports</a></footer>
+</main></body></html>

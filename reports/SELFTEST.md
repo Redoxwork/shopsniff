@@ -1,6 +1,6 @@
 # ShopSniff self-test
 
-Ran 2026-11-18T14:32:57.790Z against http://localhost:8080/
+Ran 2026-11-18T15:04:13.551Z against http://localhost:8080/
 
 ShopSniff must flag every trick in the shady store **and** give the honest store a clean bill.
 
