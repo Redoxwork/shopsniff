@@ -1,0 +1,169 @@
+{
+  "tool": "ShopSniff",
+  "version": 1,
+  "url": "http://localhost:8080/?fixed",
+  "name": "selftest-honest",
+  "id": "2026-11-18-14-25_selftest-honest",
+  "created": "2026-11-18T14:32:57.786Z",
+  "score": 100,
+  "grade": "A",
+  "flags": 0,
+  "verdict": "Plays fair",
+  "checked": 5,
+  "results": [
+    {
+      "id": "timer",
+      "title": "Fake countdown timer",
+      "question": "Does the \"sale ends in…\" timer restart when you reload?",
+      "verdict": "pass",
+      "finding": "Timer kept counting down (Sale ends in 13d 09:33:59 → 13d 09:33:20). The deadline looks real.",
+      "stored": {
+        "url": "http://localhost:8080/?fixed",
+        "timer_first": "Sale ends in 13d 09:33:59",
+        "timer_after_reload": "13d 09:33:20"
+      },
+      "kane": {
+        "status": "passed",
+        "summary": "The requested wait was completed, then the page was reloaded fresh at the specified address.\nThe sale countdown was read again from the freshly loaded page rather than reusing the first reading.\nThe refreshed countdown showed 13d 09:33:20. No payment details were entered and no order was placed.",
+        "reason": "Objective completed",
+        "test_url": "https://test-manager.lambdatest.com/projects/01M7QDFJY4GFK3BVYEAWYENMTY/test-cases/01M7QGRGWCZK2Y5MM4CZCBF8D7/dashboard/share/US_NBFPC9J9NS98S91E0PSSSD77RVO5E9K8N9RV0EWE1DXM9ASPQ64UPR5CNWK2AL6V?type=summary&agentView=true&fqdn=summary-page",
+        "credits": 27.836460000000002,
+        "duration": 98.6,
+        "exit_code": 0,
+        "steps": {
+          "done": 7,
+          "failed": 0
+        },
+        "retried": false
+      },
+      "objective": "Step 1: Go to http://localhost:8080/?fixed and store the exact time shown by the sale countdown timer (for example \"Sale ends in 14:59\") as timer_first. Step 2: Wait 10 seconds. Step 3: Navigate to http://localhost:8080/?fixed again so the page fully loads fresh, and immediately store the time the countdown now shows as timer_after_reload. Read the second value from the freshly loaded page; do not copy the first value. If the page has no countdown timer, store \"none\" as timer_first and \"none\" as timer_after_reload. Never enter payment details and never place a real order.",
+      "evidence": []
+    },
+    {
+      "id": "stock",
+      "title": "Fake \"only N left\" stock",
+      "question": "Does the scarcity message change on every reload?",
+      "verdict": "pass",
+      "finding": "Stock message stayed the same across 3 loads (12 in stock).",
+      "stored": {
+        "url": "http://localhost:8080/?fixed",
+        "stock_1": "12 in stock",
+        "stock_2": "12 in stock",
+        "stock_3": "12 in stock"
+      },
+      "kane": {
+        "status": "passed",
+        "summary": "Requested fresh loads of the product page twice and to read the first product’s stock message after each load.\nRead the first product’s stock message on the initial page and after both fresh loads; it showed “12 in stock” each time.\nFinished on the product page without adding anything to the cart, entering payment details, or placing an order.",
+        "reason": "Objective completed",
+        "test_url": "https://test-manager.lambdatest.com/projects/01M7QDFJY4GFK3BVYEAWYENMTY/test-cases/01M7QGWNA42GPP02PV856MCG8S/dashboard/share/US_I1YIE4LMP127YAZ3ESF4WK32JKEJ0UOVXIGKP3NJALTO9GKTZLZ22T0GS45EE2RS?type=summary&agentView=true&fqdn=summary-page",
+        "credits": 43.05081249999999,
+        "duration": 166,
+        "exit_code": 0,
+        "steps": {
+          "done": 12,
+          "failed": 0
+        },
+        "retried": true
+      },
+      "objective": "Step 1: Go to http://localhost:8080/?fixed and store the exact stock or scarcity message shown on the first product (for example \"Only 3 left\" or \"12 in stock\") as stock_1. Step 2: Navigate to http://localhost:8080/?fixed again so the page fully loads fresh, then store the first product's stock message as stock_2. Step 3: Navigate to http://localhost:8080/?fixed once more, then store the first product's stock message as stock_3. Read each value from the page after its own fresh load; do not copy an earlier value. Do not add anything to the cart. If there is no stock message, store \"none\" for all three. Never enter payment details and never place a real order.",
+      "evidence": []
+    },
+    {
+      "id": "addon",
+      "title": "Sneaky add-on in cart",
+      "question": "Does something you didn’t choose end up in your cart?",
+      "verdict": "pass",
+      "finding": "The cart held exactly what was added (AirWave Pro Earbuds).",
+      "stored": {
+        "url": "http://localhost:8080/?fixed#/cart",
+        "product_name": "AirWave Pro Earbuds",
+        "cart_items": "AirWave Pro Earbuds",
+        "cart_line_count": "1"
+      },
+      "kane": {
+        "status": "passed",
+        "summary": "You asked to open the first product, add it to the cart without selecting extra options, and open the cart.\nOpened the first product, AirWave Pro Earbuds, and added it to the cart without choosing any additional options.\nOpened the cart; it contains one line item: AirWave Pro Earbuds.\nNo payment details were entered and no order was placed.",
+        "reason": "Objective completed",
+        "test_url": "https://test-manager.lambdatest.com/projects/01M7QDFJY4GFK3BVYEAWYENMTY/test-cases/01M7QGVYJ29G0HT5923A2F2B9M/dashboard/share/US_QOMYEQ327RFL6U8XE62EP7K2BOKFWL82PB7VAYFDV6GJVF7Z0QGUWM83C1IS4ITK?type=summary&agentView=true&fqdn=summary-page",
+        "credits": 25.577232499999997,
+        "duration": 85.2,
+        "exit_code": 0,
+        "steps": {
+          "done": 7,
+          "failed": 0
+        },
+        "retried": false
+      },
+      "objective": "Go to http://localhost:8080/?fixed. Open the first product. Store its name as product_name. Click \"Add to cart\" without ticking or choosing any extra options. Then open the cart. Store the names of every line item in the cart, separated by \" | \", as cart_items, and store how many different line items are in the cart as cart_line_count. Never enter payment details and never place a real order.",
+      "evidence": []
+    },
+    {
+      "id": "fees",
+      "title": "Hidden fees at checkout",
+      "question": "Does the final total match the price you were shown?",
+      "verdict": "pass",
+      "finding": "The final total ($49.00) matched the listed price ($49.00).",
+      "stored": {
+        "url": "http://localhost:8080/?fixed#/review",
+        "listed_price": "$49.00",
+        "final_total": "$49.00",
+        "extra_fees": "none",
+        "cart_unadded_items_present": "false"
+      },
+      "kane": {
+        "status": "passed",
+        "summary": "Opened the first product and recorded its displayed price as $49.00.\nAdded that product to the cart without extras; no other unadded items were in the cart.\nContinued through checkout with simple test information to the order review page.\nReached the review page without entering payment details or placing an order. The final total was $49.00, with no additional fees.",
+        "reason": "Objective completed",
+        "test_url": "https://test-manager.lambdatest.com/projects/01M7QDFJY4GFK3BVYEAWYENMTY/test-cases/01M7QGYXSW6M47TT8SFJWPV1PB/dashboard/share/US_O5R4CZSB5BLA3L0ZSXGUFYPLU6EBU705RXTDTU1RZO9F6BIVG7X1UYTE0MDBU1T0?type=summary&agentView=true&fqdn=summary-page",
+        "credits": 32.542937499999994,
+        "duration": 122.6,
+        "exit_code": 0,
+        "steps": {
+          "done": 14,
+          "failed": 0
+        },
+        "retried": false
+      },
+      "objective": "Go to http://localhost:8080/?fixed. Open the first product and store its displayed price as listed_price. Add it to the cart without any extras. If the cart contains anything else you did not add, remove it. Go to checkout and continue until the final order review page, filling any required fields with simple test text. Do not enter payment details and do not place the order. Store the final order total shown on the review page as final_total, and store the names of any fees added on top of the product price as extra_fees (or \"none\"). Never enter payment details and never place a real order.",
+      "evidence": []
+    },
+    {
+      "id": "cancel",
+      "title": "Hard-to-cancel subscription",
+      "question": "Is cancelling much harder than joining?",
+      "verdict": "pass",
+      "finding": "Joining took 2 steps, cancelling took 3. Fair.",
+      "stored": {
+        "url": "http://localhost:8080/?fixed#/cancelled",
+        "join_confirmation": "You're a Club member.",
+        "cancel_confirmation": "Your DealDrop Club membership is cancelled.",
+        "guilt_text": "none",
+        "join_clicks": [
+          "Clicking DealDrop Club in the top navigation",
+          "Clicking Join Club — $12.99/mo to subscribe"
+        ],
+        "cancel_clicks": [
+          "Clicking Manage in My account in My account",
+          "Clicking Cancel membership",
+          "Clicking Yes, cancel membership to confirm cancellation"
+        ]
+      },
+      "kane": {
+        "status": "passed",
+        "summary": "You asked to join the store’s membership, then cancel it through the account area without entering payment details or placing an order.\nThe DealDrop Club membership was joined; the site confirmed: “You're a Club member.”\nThe membership was cancelled successfully; the site confirmed: “Your DealDrop Club membership is cancelled.”\nNo cancellation form or guilt-inducing stay button was shown.",
+        "reason": "Objective completed",
+        "test_url": "https://test-manager.lambdatest.com/projects/01M7QDFJY4GFK3BVYEAWYENMTY/test-cases/01M7QH23J3XJ1GTW7QSKM90AX3/dashboard/share/US_OJPX03XAEUFO3B6BUJS4WKTNWK672X3N91RFR1M1Z92U8MLQ0LMRKX5KYE6RQEI0?type=summary&agentView=true&fqdn=summary-page",
+        "credits": 41.200765000000004,
+        "duration": 132.4,
+        "exit_code": 0,
+        "steps": {
+          "done": 11,
+          "failed": 0
+        },
+        "retried": false
+      },
+      "objective": "Go to http://localhost:8080/?fixed. Find the store's membership or subscription and join it. Store the text that confirms you are a member as join_confirmation. Then cancel the membership from the account area. If a form is required, fill it with simple test text. Keep going until the site confirms the membership is cancelled, and store that confirmation text as cancel_confirmation. If any button guilt-trips you for leaving (for example \"No, I hate saving money\"), store its exact text as guilt_text, otherwise store \"none\" as guilt_text. If there is no membership or subscription, store \"none\" as join_confirmation. Never enter payment details and never place a real order.",
+      "evidence": []
+    }
+  ]
+}
