@@ -1,0 +1,109 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ShopSniff · selftest-honest · 100/100</title><style>
+:root{--ink:#14141a;--mut:#6c6c78;--bg:#f6f5f1;--card:#fff;--line:#e7e4dc;--brand:#1f6f4a}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.45}
+a{color:var(--brand)}main{max-width:900px;margin:0 auto;padding:28px 20px 60px}
+.top{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;margin-bottom:22px}.top small{font-weight:400;color:var(--mut);font-size:13px}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+.ring{--p:0;width:132px;height:132px;border-radius:50%;display:grid;place-items:center;flex:none;background:conic-gradient(var(--c) calc(var(--p)*1%),#eee 0)}
+.ring div{width:104px;height:104px;border-radius:50%;background:#fff;display:grid;place-items:center;text-align:center}
+.ring b{font-size:34px;display:block;line-height:1}.ring span{font-size:12px;color:var(--mut)}
+.hero h1{margin:0 0 4px;font-size:26px}.url{color:var(--mut);word-break:break-all;font-size:14px}
+.pill{display:inline-block;padding:3px 10px;border-radius:99px;color:#fff;font-size:12px;font-weight:700}
+.meta{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:13px;color:var(--mut)}
+h2{font-size:15px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin:30px 0 12px}
+.check{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:12px;border-left:5px solid var(--c)}
+.check h3{margin:0;font-size:17px;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.q{color:var(--mut);font-size:14px;margin:2px 0 10px}.finding{font-size:15px;margin:0 0 10px}
+.fix{background:#f1f8f4;border:1px solid #cfe8da;border-radius:10px;padding:10px 12px;font-size:14px;margin-bottom:10px}
+details{font-size:13px;color:var(--mut)}summary{cursor:pointer}
+table{border-collapse:collapse;margin:8px 0;font-size:13px}td{border:1px solid var(--line);padding:4px 8px;vertical-align:top}
+.shots{display:flex;gap:8px;overflow-x:auto;margin-top:8px}.shots img{height:150px;border-radius:8px;border:1px solid var(--line)}
+code{background:#f0eee8;padding:1px 5px;border-radius:5px;font-size:12px}
+footer{margin-top:30px;color:var(--mut);font-size:12px;text-align:center}
+.list a{display:flex;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px;text-decoration:none;color:var(--ink)}
+.dot{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;flex:none}</style></head><body><main>
+<div class="top"><span aria-hidden="true">🐽</span> ShopSniff <small>an AI agent checks if a shop is lying before you buy</small></div>
+<div class="hero">
+  <div class="ring" style="--p:100;--c:#12a86b" data-testid="score"><div><b>100</b><span>honesty score</span></div></div>
+  <div><span class="pill" style="background:#12a86b" data-testid="verdict">Plays fair · grade A</span>
+    <h1>selftest-honest</h1><div class="url">http://localhost:8080/?fixed</div>
+    <div class="meta"><span>0 tricks found</span><span>4 of 5 checks conclusive</span>
+    <span>Wed, 18 Nov 2026 13:59:40 GMT</span></div></div>
+</div>
+<h2>What Kane found</h2><section class="check" style="--c:#12a86b" data-testid="check-timer" data-verdict="pass">
+      <h3>Fake countdown timer <span class="pill" style="background:#12a86b">Fair</span></h3>
+      <p class="q">Does the &quot;sale ends in…&quot; timer restart when you reload?</p>
+      <p class="finding">Timer kept counting down (13d 10:07:19 → 13d 10:06:42). The deadline looks real.</p>
+      
+      
+      <details><summary>Evidence from Kane</summary>
+        <table><tr><td><code>url</code></td><td>http://localhost:8080/?fixed</td></tr><tr><td><code>timer_first</code></td><td>13d 10:07:19</td></tr><tr><td><code>timer_after_reload</code></td><td>13d 10:06:42</td></tr></table>
+        <p>You asked to find the sale countdown, wait 10 seconds, reload the page, and record the timer immediately afterward.
+A Black Friday sale countdown was found and initially showed 13d 10:07:19.
+After waiting and reloading the page, the same countdown showed 13d 10:06:42.
+No payment details were entered and no order was placed.</p>
+        <p>Kane run: passed · 7 steps · 88.5s · 24.200337500000003 credits
+         · <a href="https://test-manager.lambdatest.com/projects/01M7QDFJY4GFK3BVYEAWYENMTY/test-cases/01M7QEV95CQ2C1YRDG8PX88XTG/dashboard/share/US_DULIQ01O40J1ZLRGG8Z9EV36080JFBSHKIT5YAQO7P2XD7198JOY9OS5W04W9TAB?type=summary&amp;agentView=true&amp;fqdn=summary-page" target="_blank">Open in TestMu Test Manager</a></p>
+        <p>Objective given to Kane:<br><code>Go to http://localhost:8080/?fixed. Look for a sale countdown timer on the page (for example &quot;Sale ends in 14:59&quot;). Store the exact time it shows as timer_first. Wait 10 seconds, then reload the page. Store the exact time the same countdown shows right after the reload as timer_after_reload. If the page has no countdown timer, store &quot;none&quot; as timer_first and &quot;none&quot; as timer_after_reload. Never enter payment details and never place a real order.</code></p>
+      </details></section><section class="check" style="--c:#12a86b" data-testid="check-stock" data-verdict="pass">
+      <h3>Fake &quot;only N left&quot; stock <span class="pill" style="background:#12a86b">Fair</span></h3>
+      <p class="q">Does the scarcity message change on every reload?</p>
+      <p class="finding">Stock message stayed the same across 3 loads (12 in stock).</p>
+      
+      
+      <details><summary>Evidence from Kane</summary>
+        <table><tr><td><code>url</code></td><td>http://localhost:8080/?fixed</td></tr><tr><td><code>product_name</code></td><td>AirWave Pro Earbuds</td></tr><tr><td><code>stock_1</code></td><td>12 in stock</td></tr><tr><td><code>stock_2</code></td><td>12 in stock</td></tr><tr><td><code>stock_3</code></td><td>12 in stock</td></tr></table>
+        <p>Reviewed the first product, AirWave Pro Earbuds, and recorded its availability message as “12 in stock.”
+Reloaded the page twice and confirmed that AirWave Pro Earbuds showed “12 in stock” after each reload.
+No items were added to the cart and no checkout or payment action was taken.</p>
+        <p>Kane run: passed · 7 steps · 140.4s · 42.420725000000004 credits
+         · <a href="https://test-manager.lambdatest.com/projects/01M7QDFJY4GFK3BVYEAWYENMTY/test-cases/01M7QEYQD490GXBGMT26M3SMBG/dashboard/share/US_WKN3LK24IP8GO5HY9CSHK3FRPJ3IG4EY42QF5LC7Z16TJU8EDQY930XAPTHKNZAR?type=summary&amp;agentView=true&amp;fqdn=summary-page" target="_blank">Open in TestMu Test Manager</a></p>
+        <p>Objective given to Kane:<br><code>Go to http://localhost:8080/?fixed. Find a stock or scarcity message on the first product (for example &quot;Only 3 left&quot; or &quot;12 in stock&quot;) and store its exact text as stock_1. Reload the page and store the same product&#39;s stock message as stock_2. Reload once more and store it as stock_3. Do not add anything to the cart. If there is no stock message, store &quot;none&quot; for all three. Never enter payment details and never place a real order.</code></p>
+      </details></section><section class="check" style="--c:#12a86b" data-testid="check-addon" data-verdict="pass">
+      <h3>Sneaky add-on in cart <span class="pill" style="background:#12a86b">Fair</span></h3>
+      <p class="q">Does something you didn’t choose end up in your cart?</p>
+      <p class="finding">The cart held exactly what was added (AirWave Pro Earbuds).</p>
+      
+      
+      <details><summary>Evidence from Kane</summary>
+        <table><tr><td><code>url</code></td><td>http://localhost:8080/?fixed#/cart</td></tr><tr><td><code>product_name</code></td><td>AirWave Pro Earbuds</td></tr><tr><td><code>cart_items</code></td><td>AirWave Pro Earbuds</td></tr><tr><td><code>cart_line_count</code></td><td>1</td></tr></table>
+        <p>Opened the first product, AirWave Pro Earbuds.
+Added it to the cart without selecting any extra options.
+Opened the cart, which contains one line item: AirWave Pro Earbuds.
+No payment details were entered and no order was placed.</p>
+        <p>Kane run: passed · 7 steps · 66.7s · 23.690742499999995 credits
+         · <a href="https://test-manager.lambdatest.com/projects/01M7QDFJY4GFK3BVYEAWYENMTY/test-cases/01M7QEYBZ4GTHJ0FMBD0MS9D22/dashboard/share/US_JG5KDG1C5LC2R7O2PT6EW9QJ0XML4VOPKYFAQ1F9EDPV01MHUASJFG3BNH7WKZOG?type=summary&amp;agentView=true&amp;fqdn=summary-page" target="_blank">Open in TestMu Test Manager</a></p>
+        <p>Objective given to Kane:<br><code>Go to http://localhost:8080/?fixed. Open the first product. Store its name as product_name. Click &quot;Add to cart&quot; without ticking or choosing any extra options. Then open the cart. Store the names of every line item in the cart, separated by &quot; | &quot;, as cart_items, and store how many different line items are in the cart as cart_line_count. Never enter payment details and never place a real order.</code></p>
+      </details></section><section class="check" style="--c:#12a86b" data-testid="check-fees" data-verdict="pass">
+      <h3>Hidden fees at checkout <span class="pill" style="background:#12a86b">Fair</span></h3>
+      <p class="q">Does the final total match the price you were shown?</p>
+      <p class="finding">The final total ($49.00) matched the listed price ($49.00).</p>
+      
+      
+      <details><summary>Evidence from Kane</summary>
+        <table><tr><td><code>url</code></td><td>http://localhost:8080/?fixed#/review</td></tr><tr><td><code>listed_price</code></td><td>$49.00</td></tr><tr><td><code>final_total</code></td><td>$49.00</td></tr><tr><td><code>extra_fees</code></td><td>none</td></tr></table>
+        <p>Opened the first product, AirWave Pro Earbuds, and recorded its displayed price of $49.00.
+Added the earbuds to the cart without extras; the cart contained no other items.
+Continued through checkout using simple test information and reached the final order review page without entering payment details or placing an order.
+The review page showed a final total of $49.00 with no additional fees.</p>
+        <p>Kane run: passed · 14 steps · 106.4s · 34.985240000000005 credits
+         · <a href="https://test-manager.lambdatest.com/projects/01M7QDFJY4GFK3BVYEAWYENMTY/test-cases/01M7QF0S203118PS029VG80QK1/dashboard/share/US_Z6ZNUE4VP0E5NAYDXGDN36QGMRWHYC5WHUKFVKGG6Q2M7J7ASO66NYFWBS4CXHSM?type=summary&amp;agentView=true&amp;fqdn=summary-page" target="_blank">Open in TestMu Test Manager</a></p>
+        <p>Objective given to Kane:<br><code>Go to http://localhost:8080/?fixed. Open the first product and store its displayed price as listed_price. Add it to the cart without any extras. If the cart contains anything else you did not add, remove it. Go to checkout and continue until the final order review page, filling any required fields with simple test text. Do not enter payment details and do not place the order. Store the final order total shown on the review page as final_total, and store the names of any fees added on top of the product price as extra_fees (or &quot;none&quot;). Never enter payment details and never place a real order.</code></p>
+      </details></section><section class="check" style="--c:#8a8a96" data-testid="check-cancel" data-verdict="unknown">
+      <h3>Hard-to-cancel subscription <span class="pill" style="background:#8a8a96">Inconclusive</span></h3>
+      <p class="q">Is cancelling much harder than joining?</p>
+      <p class="finding">Kane couldn&#39;t finish this check: The membership was joined, but the test could not read its recorded click history to produce the required join path.</p>
+      
+      
+      <details><summary>Evidence from Kane</summary>
+        <p>No values stored.</p>
+        <p>The run’s analysis step did not have access to the click record it needed. The recorded actions show the join path was DealDrop Club &gt; Join Club $12.99 per month, and the resulting page shows the account as a Club member.
+Fix the test-run configuration or reporting handoff so the analyzer receives the recorded click history. Preserve the two-click path as: DealDrop Club &gt; Join Club $12.99 per month.</p>
+        <p>Kane run: failed · 4 steps · 78.2s · 18.0966775 credits
+         · <a href="https://test-manager.lambdatest.com/projects/01M7QDFJY4GFK3BVYEAWYENMTY/test-cases/01M7QF6T1DT34QDHAEF9V0TK9R/dashboard/share/US_EGSXV7X9VVFJ5LBEPDMWC8YDYW3GEZLN4PHW521LRS2146JBIPTIMS27XJJWUR45?type=summary&amp;agentView=true&amp;fqdn=summary-page" target="_blank">Open in TestMu Test Manager</a></p>
+        <p>Objective given to Kane:<br><code>Go to http://localhost:8080/?fixed. Find the store&#39;s membership or subscription and join it. Store the buttons and links you clicked to join, in order and separated by &quot; &gt; &quot;, as join_path. Then go to the account page and cancel the membership. If a form is required, fill it with simple test text. Keep going until the site confirms the membership is cancelled. Store every button and link you clicked and every field you filled to cancel, in order and separated by &quot; &gt; &quot;, as cancel_path. If any button guilt-trips you for leaving (for example &quot;No, I hate saving money&quot;), store its exact text as guilt_text, otherwise store &quot;none&quot; as guilt_text. If there is no membership or subscription, store &quot;none&quot; as join_path and cancel_path. Never enter payment details and never place a real order.</code></p>
+      </details></section>
+<p style="font-size:14px">Running this shop yourself? Hand <a href="fixes.md">fixes.md</a> to your coding agent, then run ShopSniff again.</p>
+<footer>Every check was carried out by Kane CLI (TestMu AI) in a real browser, acting like a shopper. ShopSniff never pays or places real orders.<br><a href="../index.html">All reports</a></footer>
+</main></body></html>
