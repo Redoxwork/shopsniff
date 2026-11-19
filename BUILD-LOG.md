@@ -14,5 +14,6 @@ ShopSniff was built with Claude as the coding agent. Every change was verified b
 | 9 | **Self-test 5/5.** Shady store 0/100, honest store 100/100. | — | green ✅ |
 | 10–11 | After the site and shop swapped emoji for drawn icons, the shady store's stock check came back **inconclusive** twice. Kane said it *"could not identify the visible stock messages"*. A small flame icon had been put inside the stock message. (Run 10 also had one bad reload on the timer; run 11's timer was correct.) | Drew the flame with CSS so the stock message is plain text again. | `210e869` → `b7f3a78` |
 | 12 | **Self-test 5/5.** Shady store 0/100, honest store 100/100. | — | green ✅ |
+| Local (Windows) | First run on a Windows laptop: every check failed with exit `-4058` and *Could not find "kane-cli"*. On Windows, npm installs `kane-cli` as a `.cmd` shim, which Node can't start directly. | ShopSniff now finds Kane's real program in npm's global folder on Windows and starts it without a shell, so the plain-English missions keep their quotes. | Windows fix |
 
 What we learned: Kane is the evidence, and ShopSniff never trusts a value Kane didn't actually observe. Each Kane run also links to its TestMu Test Manager page, where you can see the full run.

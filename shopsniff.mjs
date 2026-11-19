@@ -5,7 +5,7 @@
 //   node shopsniff.mjs <shop-url> [--name label] [--only timer,stock] [--parallel 2]
 //   node shopsniff.mjs selftest <demo-shop-url>      known-answer test of ShopSniff itself
 //
-import { spawn } from 'node:child_process';
+import { spawn, execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -15,6 +15,27 @@ import { renderReport, renderGallery, renderFixes, scoreOf } from './report.mjs'
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const REPORTS = path.join(ROOT, 'reports');
 const KANE = process.env.SHOPSNIFF_KANE || 'kane-cli';
+
+// On Windows, npm installs "kane-cli" as a .cmd shim, which Node can't spawn
+// directly (ENOENT / exit -4058). Find the real program in npm's global folder
+// and run it without a shell, so the plain-English objectives keep their quoting.
+function resolveKane() {
+  if (process.platform !== 'win32' || process.env.SHOPSNIFF_KANE) return { cmd: KANE, pre: [] };
+  try {
+    const root = execSync('npm root -g', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+    const pkgDir = path.join(root, '@testmuai', 'kane-cli');
+    const pkg = JSON.parse(fs.readFileSync(path.join(pkgDir, 'package.json'), 'utf8'));
+    const rel = typeof pkg.bin === 'string' ? pkg.bin : (pkg.bin?.['kane-cli'] || Object.values(pkg.bin || {})[0]);
+    if (!rel) throw new Error('no bin');
+    const bin = path.join(pkgDir, rel);
+    const head = fs.readFileSync(bin).subarray(0, 200).toString('utf8');
+    const isJs = /\.(c|m)?js$/i.test(bin) || /^#!.*\bnode\b/.test(head);
+    return isJs ? { cmd: process.execPath, pre: [bin] } : { cmd: bin, pre: [] };
+  } catch {
+    return { cmd: 'kane-cli.cmd', pre: [], shell: true };
+  }
+}
+const KANE_CMD = resolveKane();
 
 // ---------- args ----------
 const argv = process.argv.slice(2);
@@ -37,7 +58,7 @@ function runKane(check, url, logDir) {
     const objective = check.objective(url);
     const args = ['run', objective, '--agent', '--headless', '--timeout', String(check.timeout), '--max-steps', String(check.maxSteps)];
     const started = Date.now();
-    const child = spawn(KANE, args, { env: { ...process.env, KANE_CLI_USER_AGENT: process.env.KANE_CLI_USER_AGENT || 'claude-code' } });
+    const child = spawn(KANE_CMD.cmd, [...KANE_CMD.pre, ...args], { shell: !!KANE_CMD.shell, env: { ...process.env, KANE_CLI_USER_AGENT: process.env.KANE_CLI_USER_AGENT || 'claude-code' } });
     const out = fs.createWriteStream(path.join(logDir, `${check.id}.ndjson`));
     const err = fs.createWriteStream(path.join(logDir, `${check.id}.stderr.log`));
     let buf = '', runEnd = null, steps = { done: 0, failed: 0 }, errors = [], actions = [], loads = 0;
